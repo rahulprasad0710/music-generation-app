@@ -1,0 +1,44 @@
+{
+    "compilerOptions": {
+        "target": "ES2023",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+
+        /* Modules */
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "rootDir": "./src",
+        "resolvePackageJsonExports": true,
+        "outDir": "./dist",
+        "ignoreDeprecations": "6.0",
+        "baseUrl": ".",
+        /* Paths */
+        "paths": {
+            "@/*": ["./src/*"],
+            "@entity/*": ["src/lib/entity/*"],
+            "@enums/*": ["./src/enums/*"],
+            "@middlewares/*": ["./src/middlewares/*"],
+            "@utils/*": ["./src/utils/*"],
+            "@config/*": ["./src/config/*"],
+            "@routes/*": ["./src/routes/*"],
+            "@services/*": ["./src/services/*"],
+            "@controllers/*": ["./src/controllers/*"],
+            "@validators/*": ["./src/validators/*"],
+            "@appTypes/*": ["./src/types/*"],
+            "@awsSettings/*": ["./src/aws/*"],
+            "@constants/*": ["./src/constants/*"],
+            "@events/*": ["./src/events/*"],
+            "@subscribers/*": ["./src/subscribers/*"],
+            "@omsService": ["./src/services/oms*"]
+        },
+
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "strictPropertyInitialization": false,
+        "noImplicitReturns": false,
+        "skipLibCheck": true
+    },
+    "include": ["src/**/*", "src/data/**/*.json"],
+    "typeRoots": ["./src/types", "./node_modules/@types"]
+}
