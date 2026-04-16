@@ -8,6 +8,7 @@ import morgan from "morgan";
 import { corsOptions } from "./config/corsConfig";
 import { APP_CONSTANT } from "./constants/AppConstant";
 import routes from "./routes/index";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 const app = express();
@@ -17,8 +18,10 @@ const port = Number(process.env.PORT) || 8000;
 
 app.use(express.json());
 
+app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(helmet());
+app.use(morgan("dev"));
 
 app.use(
     helmet.crossOriginResourcePolicy({

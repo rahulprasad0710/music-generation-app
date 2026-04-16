@@ -1,13 +1,6 @@
 import cors from "cors";
 
-export const allowedOrigins = [
-    "http://web.admincentrik.com:5173",
-    "http://web.admincentrik.com",
-    "http://89.116.32.56:5173",
-    "http://localhost:5173",
-    "https://web.admincentrik.com",
-    "https://www.admincentrik.com",
-];
+export const allowedOrigins = ["http://localhost:3000"];
 
 export const corsOptions: cors.CorsOptions = {
     origin: (origin, callback) => {
