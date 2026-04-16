@@ -23,7 +23,7 @@
             "@routes/*": ["./src/routes/*"],
             "@services/*": ["./src/services/*"],
             "@controllers/*": ["./src/controllers/*"],
-            "@validators/*": ["./src/validators/*"],
+            "@validation/*": ["./src/validation/*"],
             "@appTypes/*": ["./src/types/*"],
             "@awsSettings/*": ["./src/aws/*"],
             "@constants/*": ["./src/constants/*"],

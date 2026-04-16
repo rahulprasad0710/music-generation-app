@@ -4,13 +4,13 @@ import { Router as ExpressRouter } from "express";
 
 // ROUTES
 
-// import authRoute from "./auth/auth.route";
+import authRoute from "./auth.route";
 import userRoute from "./user.route";
-// import adminRoute from "./admin/admin.route";
 
 const router = ExpressRouter();
 
 router.use("/users", userRoute);
+router.use("/auth", authRoute);
 
 // *  AUTH ROUTE router.use("/auth", authRoute);
 // router.use(verifyToken); // * APPLY AUTH MIDDLEWARE

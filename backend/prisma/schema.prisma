@@ -24,4 +24,5 @@ model User {
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  isRememberMe  Boolean  @default(false)
 }
