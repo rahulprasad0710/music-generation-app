@@ -9,7 +9,7 @@ import { corsOptions } from "./config/corsConfig";
 import { APP_CONSTANT } from "./constants/AppConstant";
 import routes from "./routes/index";
 import cookieParser from "cookie-parser";
-
+import { setupSwagger } from "./config/swagger";
 import { SocketManager } from "@/socket/socket.manager";
 import { startPromptScheduler } from "@/schedulers/prompt.scheduler";
 import AppError from "./utils/AppError";
@@ -40,6 +40,8 @@ app.use(
         policy: "cross-origin",
     }),
 );
+
+setupSwagger(app);
 
 app.get("/", (req, res) => {
     res.send("Hello from server");
