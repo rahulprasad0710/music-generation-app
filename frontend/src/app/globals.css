@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+:root {
+    --background: #ffffff;
+    --foreground: #171717;
+}
+
+@theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --font-sans: var(--font-geist-sans);
+    --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background: #0a0a0a;
+        --foreground: #ededed;
+    }
+}
+
+body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.border-alpha-light-8 {
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.bg-alpha-light-8 {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.bg-alpha-light-8:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* optional hover effect */
+
+.background-color {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+/* NOT Tailwind → custom scrollbar styling */
+.pretty-scrollbar {
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: transparent transparent;
+}
+
+/* Chrome, Edge, Safari */
+.pretty-scrollbar::-webkit-scrollbar {
+    width: 4px; /* thin by default */
+}
+
+.pretty-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.pretty-scrollbar::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 9999px;
+    transition: background-color 0.3s ease; /* NOT Tailwind */
+}
+
+/* 👉 On hover, show scrollbar */
+.pretty-scrollbar:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Firefox hover */
+.pretty-scrollbar:hover {
+    scrollbar-color: rgba(255, 255, 255, 0.4) transparent;
+}
+
+@keyframes gradient-move {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient-move 4s ease infinite;
+}

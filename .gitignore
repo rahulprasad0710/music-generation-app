@@ -13,19 +13,21 @@ pnpm-debug.log*
 *.log
 
 # Next.js (client)
-client/node_modules/
-client/.next/
-client/out/
-client/build/
-client/.env*
-client/coverage/
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.env*
+frontend/coverage/
 
 # Express.js (server)
-server/node_modules/
-server/dist/
-server/build/
-server/.env*
-server/coverage/
+backend/node_modules/
+backend/dist/
+backend/build/
+backend/.env*
+backend/coverage/
+backend/src/generated/
+
 
 # TypeScript
 *.tsbuildinfo
