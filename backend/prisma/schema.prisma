@@ -1,5 +1,3 @@
-
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -9,20 +7,127 @@ datasource db {
   provider = "postgresql"
 }
 
-
 model User {
-  id            Int      @id @default(autoincrement())
-  name          String
-  email         String   @unique
-  password      String
+  id Int @id @default(autoincrement())
 
-  isPremium     Boolean  @default(false)
-  isActive      Boolean  @default(true)
-  isBlacklisted Boolean  @default(false)
+  name  String
+  email String @unique
 
-  refreshToken  String?
+  password String
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  isRememberMe  Boolean  @default(false)
+  isPremium     Boolean @default(false)
+  isActive      Boolean @default(true)
+  isBlacklisted Boolean @default(false)
+
+  refreshToken String?
+
+  isRememberMe Boolean @default(false)
+
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
+
+  prompts Prompt[]
+
+  audios  Audio[] 
+
+  //  INDEXES
+  @@index([email])
+  @@index([isActive, isBlacklisted])
+  @@index([createdAt])
+}
+
+enum JobEventType {
+  JOB_COMPLETED
+  JOB_FAILED
+  JOB_PROCESSING
+}
+
+enum GenerationStatus {
+  PENDING
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model Prompt {
+  id Int @id @default(autoincrement())
+
+  userId Int?
+  user   User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  prompt     String                   @db.Text
+  prompt_tsv Unsupported("tsvector")?
+
+  status GenerationStatus @default(PENDING)
+
+  title     String?
+
+  createdAt   DateTime  @default(now()) @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @db.Timestamptz
+  startedAt   DateTime? @db.Timestamptz
+  completedAt DateTime? @db.Timestamptz
+
+  attempts    Int @default(0)
+  maxAttempts Int @default(3)
+
+  result       Json?
+  errorMessage String? @db.Text
+
+  eventEmitted Boolean @default(false)
+
+  jobId    String? @unique
+  priority Int     @default(1)
+
+  events JobEvent[]
+
+  audios  Audio[] 
+
+  @@index([status])
+  @@index([status, priority])
+  @@index([userId])
+  @@index([createdAt, id])
+}
+
+model JobEvent {
+  id Int @id @default(autoincrement())
+
+  promptId Int
+  prompt   Prompt @relation(fields: [promptId], references: [id], onDelete: Cascade)
+
+  type    JobEventType
+  payload Json?
+
+  createdAt DateTime @default(now()) @db.Timestamptz
+
+  @@index([promptId])
+}
+
+
+model Audio {
+  id Int @id @default(autoincrement())
+
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  promptId    Int
+  prompt      Prompt   @relation(fields: [promptId], references: [id], onDelete: Cascade)
+
+  title       String
+  inputPrompt String   @db.Text
+
+  audioUrl    String
+  hlsUrl      String?
+  thumbnail   String?
+
+  durationMs  Int?
+  playCount   Int      @default(0)
+  likeCount   Int      @default(0)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([promptId])
+  @@index([createdAt])
 }

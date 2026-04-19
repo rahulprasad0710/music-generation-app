@@ -19,6 +19,7 @@ export async function rateLimitMiddleware(
     res: Response,
     next: NextFunction,
 ): Promise<void> {
+    console.log("TTT");
     const user = req.verifiedUser as ILoggedInUser | undefined;
 
     // If no authenticated user, skip rate limiting (let auth middleware handle it)
@@ -42,7 +43,6 @@ export async function rateLimitMiddleware(
             user.isPremium,
         );
 
-        // Attach rate limit headers regardless of allow/deny
         res.setHeader("X-RateLimit-Limit", result.limit);
         res.setHeader("X-RateLimit-Remaining", result.remaining);
         res.setHeader("X-RateLimit-Reset", result.resetInSeconds);
@@ -63,8 +63,6 @@ export async function rateLimitMiddleware(
 
         next();
     } catch (error) {
-        // If Redis is down, fail open (let the request through) to avoid
-        // taking down the entire API due to a cache layer failure.
         console.error(
             "[RateLimitMiddleware] Redis error, failing open:",
             error,

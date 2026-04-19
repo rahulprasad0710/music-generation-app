@@ -7,15 +7,10 @@ import authService from "@services/auth.service";
 import jwt from "jsonwebtoken";
 import { APP_CONSTANT } from "@/constants/AppConstant";
 
-// declare module "socket.io" {
-//     interface Socket {
-//         verifiedUserId?: number;
-//     }
-// }
-const decodeToken = async (
+export const decodeToken = async (
     token: string,
     tokenType?: string,
-): Promise<number> => {
+): Promise<{ userId: number }> => {
     try {
         let decoded = null;
         if (tokenType === "REFRESH") {
@@ -39,7 +34,7 @@ const decodeToken = async (
             throw new AppError("Invalid token payload", ErrorType.AUTH_ERROR);
         }
 
-        return Number(decoded.id);
+        return { userId: Number(decoded.id) };
     } catch (error: unknown) {
         console.log("LOG: ~ decodeToken ~ error:", error);
         if (typeof error === "object" && error !== null && "name" in error) {
@@ -90,9 +85,12 @@ const verifyToken = async (
             return;
         }
 
-        const userId = await decodeToken(token);
+        const userResponse = await decodeToken(token);
 
-        const user = await authService.authenticateUser(userId, true);
+        const user = await authService.authenticateUser(
+            userResponse.userId,
+            true,
+        );
 
         if (!user || user?.id == undefined) {
             res.status(401).json({
@@ -128,10 +126,10 @@ export const verifyRefreshToken = async (
             return;
         }
 
-        let userId: number;
+        let userResponse;
 
         try {
-            userId = await decodeToken(token, "REFRESH");
+            userResponse = await decodeToken(token, "REFRESH");
         } catch (error) {
             res.status(401).json({
                 success: false,
@@ -141,7 +139,10 @@ export const verifyRefreshToken = async (
             return;
         }
 
-        const user = await authService.authenticateUser(userId, true);
+        const user = await authService.authenticateUser(
+            userResponse.userId,
+            true,
+        );
 
         if (!user) {
             res.status(401).json({
@@ -176,36 +177,6 @@ export const verifyRefreshToken = async (
         next();
     } catch (error) {
         next(error);
-    }
-};
-
-export const socketAuth = async (
-    socket: Socket,
-    next: (err?: Error) => void,
-) => {
-    try {
-        const token = socket.handshake.query.token as string;
-
-        // if (!token) {
-        //     return next(new Error("Unauthorized"));
-        // }
-
-        // const token = authHeader.split(" ")[1];
-        if (!token) {
-            return next(new Error("Unauthorized: Missing token"));
-        }
-
-        const decodedUser = await decodeToken(token);
-        console.log("LOG: ~ socketAuth ~ decodedUser:", decodedUser);
-        if (!decodedUser) {
-            return next(new Error("Authentication error"));
-        }
-        socket.verifiedUserId = decodedUser;
-        next();
-    } catch (error) {
-        console.error("Socket auth error:", error);
-
-        next(new Error("Authentication error"));
     }
 };
 

@@ -19,6 +19,7 @@ export class RedisConfig {
             host: redisHost,
             port: redisPort,
             lazyConnect: true,
+            maxRetriesPerRequest: null,
 
             // Auto-reconnect strategy
             retryStrategy: (times: number) => {

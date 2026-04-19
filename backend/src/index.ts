@@ -10,6 +10,13 @@ import { APP_CONSTANT } from "./constants/AppConstant";
 import routes from "./routes/index";
 import cookieParser from "cookie-parser";
 
+import { SocketManager } from "@/socket/socket.manager";
+import { startPromptScheduler } from "@/schedulers/prompt.scheduler";
+import AppError from "./utils/AppError";
+import { ErrorType } from "./enums/error.enum";
+import { startAudioWorker } from "./workers/audio.worker";
+import errorHandler from "./middlewares/errorHandler";
+
 dotenv.config();
 const app = express();
 export const httpServer = createServer(app);
@@ -23,6 +30,11 @@ app.use(cors(corsOptions));
 app.use(helmet());
 app.use(morgan("dev"));
 
+SocketManager.init(httpServer);
+
+await startAudioWorker();
+startPromptScheduler();
+
 app.use(
     helmet.crossOriginResourcePolicy({
         policy: "cross-origin",
@@ -35,9 +47,11 @@ app.get("/", (req, res) => {
 
 app.use("/api", routes);
 
-// app.use((_req: Request, _res: Response, next: NextFunction) => {
-//     next(new AppError(`Page not found.`, ErrorType.NOT_FOUND_ERROR));
-// });
+app.use((_req: Request, _res: Response, next: NextFunction) => {
+    next(new AppError(`Page not found.`, ErrorType.NOT_FOUND_ERROR));
+});
+
+app.use(errorHandler);
 
 httpServer.listen(port, () => {
     console.log(

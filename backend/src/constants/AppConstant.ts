@@ -21,4 +21,5 @@ export const APP_CONSTANT = {
     FRONTEND_BASE_URL: process.env.FRONTEND_BASE_URL,
     START_APP_EMAIL: process.env.START_APP_EMAIL,
     NEXT_CLIENT_URL: process.env.NEXT_CLIENT_URL,
+    PAGE_SIZE: 10,
 };

@@ -105,4 +105,23 @@ export class RedisService {
         const redis = await RedisConfig.getInstance();
         return await redis.hdel(key, field);
     }
+
+    /**
+     * Set TTL (expire) on any key
+     * @Params: key:string
+     * @Params: seconds:number
+     */
+    public static async expire(key: string, seconds: number): Promise<number> {
+        const redis = await RedisConfig.getInstance();
+        return await redis.expire(key, seconds);
+    }
+
+    /**
+     * Delete an entire key (used for cache invalidation)
+     * @Params: key:string
+     */
+    public static async del(key: string): Promise<number> {
+        const redis = await RedisConfig.getInstance();
+        return await redis.del(key);
+    }
 }

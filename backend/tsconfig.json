@@ -29,7 +29,7 @@
             "@constants/*": ["./src/constants/*"],
             "@events/*": ["./src/events/*"],
             "@subscribers/*": ["./src/subscribers/*"],
-            "@omsService": ["./src/services/oms*"]
+            "@socket": ["./src/socket/*"]
         },
 
         "esModuleInterop": true,

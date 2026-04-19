@@ -2,23 +2,17 @@ import { Router, Request, Response, NextFunction } from "express";
 import { rateLimitMiddleware } from "@/middlewares/ratelimit.middleware";
 import verifyToken from "@/middlewares/authentication.middleware";
 import asyncTryCatchFn from "@utils/asyncTryCatchFn";
-import { PromptController } from "@controllers/prompt.controller";
+import { AudioController } from "@controllers/audio.controller";
 
 const router = Router();
-const promptController = new PromptController();
 
-router.post(
-    "/",
-    verifyToken,
-    rateLimitMiddleware,
-    asyncTryCatchFn(promptController.create),
-);
+const audioController = new AudioController();
 
 router.get(
     "/users",
     verifyToken,
-    asyncTryCatchFn(promptController.getPromptByUser),
+    asyncTryCatchFn(audioController.getAudioByUser),
 );
-router.get("/", verifyToken, asyncTryCatchFn(promptController.getAll));
+router.get("/", asyncTryCatchFn(audioController.getAll));
 
 export default router;
