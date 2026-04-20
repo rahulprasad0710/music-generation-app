@@ -20,7 +20,7 @@ const accessToken = ({ userId, userType, loginType }: Token) => {
         { id: userId, userType, loginType },
         APP_CONSTANT.JWT_ACCESS_SECRET as string,
         {
-            expiresIn: APP_CONSTANT.NODE_ENV === "production" ? "15m" : "15m",
+            expiresIn: "15m",
         },
     );
     return token;

@@ -12,17 +12,17 @@ cd music-generation-app
 
 # copy and fill env files
 cp backend/.env.example backend/.env
-cp frontend/.env.example frontend/.env.local
+cp frontend/.env.example frontend/.env
 
 # spin up everything
 docker-compose up --build
 ```
 
-| Service  | URL                        |
-| -------- | -------------------------- |
-| Frontend | http://localhost:3000      |
-| Backend  | http://localhost:8000      |
-| API Docs | http://localhost:8000/docs |
+| Service  | URL                                |
+| -------- | ---------------------------------- |
+| Frontend | http://localhost:3000              |
+| Backend  | http://localhost:8000              |
+| API Docs | http://localhost:8000/docs Swagger |
 
 ---
 
@@ -84,7 +84,7 @@ Worker processes job (5–10s simulated delay)
 
 ---
 
-## 🔐 Token Strategy
+## 🔐 Token Strategy | Rotating Token
 
 ### Access Token
 
@@ -125,7 +125,7 @@ Implemented with Redis sliding window per user:
 BullMQ job priority:
 
 - `PAID` users → priority `1` (processed first)
-- `FREE` users → priority `2`
+- `FREE` users → priority `10`
 
 ---
 
@@ -140,13 +140,13 @@ GET /api/users?q=&cursor=
 
 ### Ranking (weighted)
 
-| Tier | Match Type       |
-| ---- | ---------------- |
-| 1    | Exact match      |
-| 2    | Starts with      |
-| 3    | Full-text search |
-| 4    | Fuzzy / trigram  |
-| 5    | Partial LIKE     |
+| Tier | Match Type                                     |
+| ---- | ---------------------------------------------- |
+| 1    | Exact match                                    |
+| 2    | Starts with                                    |
+| 3    | Full-text search And GIN Indexing              |
+| 4    | Fuzzy / trigram For Fuzzy Logic for typo Error |
+| 5    | Partial LIKE                                   |
 
 ### Caching
 
@@ -197,11 +197,12 @@ music-generation-app/
 
 ```env
 DATABASE=postgresql://user:password@host:5432/dbname
-REDIS_URL=redis://localhost:6379
 JWT_SECRET=your_jwt_secret
 JWT_REFRESH_SECRET=your_refresh_secret
 PORT=8000
 NODE_ENV=development
+REDIS_HOST=redis
+REDIS_PORT=6379
 ```
 
 **`frontend/.env.local`**
