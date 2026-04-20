@@ -7,8 +7,8 @@ import { useAuthStore } from "@/store/auth.store";
 import ProfilePopupScreen from "./ProfilePopUpScreen";
 import { useToggleStore } from "@/store/profile.store";
 import MusicLogo from "./molecules/MusicGptLogo";
-import Link from "next/link";
 import { GradientAvatar } from "./molecules/ProfileIcon";
+import { div } from "framer-motion/client";
 
 const Header = () => {
     const { user, isAuthenticating } = useAuthStore((state) => state);
@@ -17,16 +17,13 @@ const Header = () => {
     const { isMenubarOpen } = useToggleStore();
 
     return (
-        <header className=' fixed left-0 top-0 z-50 h-20 w-[calc(100vw-20px)] pointer-events-auto bg-transparent'>
+        <header className=' fixed left-0 top-0 z-40 h-20 w-[calc(100vw-20px)] pointer-events-auto bg-transparent'>
             <div className='relative flex h-full w-full items-center justify-between responsive-side-padding px-6'>
                 <div className=' flex-1 '>
-                    {isMenubarOpen && (
-                        <Link
-                            className='cursor-pointer block transition md:hidden'
-                            href='/'
-                        >
+                    {!isMenubarOpen && (
+                        <div className='block md:hidden'>
                             <MusicLogo />
-                        </Link>
+                        </div>
                     )}
                 </div>
                 <div className='pointer-events-auto flex h-20 items-center justify-end gap-x-base'>

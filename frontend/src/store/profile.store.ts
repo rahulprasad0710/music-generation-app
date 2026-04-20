@@ -41,7 +41,7 @@ export const useToggleStore = create<ToggleState>((set) => ({
 
     setMenubarToggle: () =>
         set((state) => ({
-            isMenubarOpen: !state.isOpen,
+            isMenubarOpen: !state.isMenubarOpen,
         })),
 
     setMenubarOpen: (value) =>

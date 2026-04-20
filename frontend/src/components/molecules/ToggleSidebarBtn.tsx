@@ -9,7 +9,7 @@ export default function ToggleMenuButton() {
             type='button'
             aria-label='Toggle Menu'
             onClick={() => setMenubarToggle()}
-            className='box-border size-10 rounded-xl cursor-pointer  border border-neutral-500 bg-white/[0.08] text-white backdrop-blur inline-flex items-center justify-center transition-colors duration-200 hover:bg-white/[0.16] relative'
+            className='box-border size-10 rounded-xl cursor-pointer  border border-neutral-500 bg-white/[0.08] hover:bg-white/[0.09] text-white backdrop-blur inline-flex items-center justify-center transition-colors duration-200 hover:bg-white/[0.16] relative'
         >
             {/* Menu Icon */}
             <svg

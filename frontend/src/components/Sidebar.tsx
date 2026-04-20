@@ -54,18 +54,14 @@ const footerLinks = [
 
 export default function DesktopNavigation() {
     const { isMenubarOpen, setMenubarToggle } = useToggleStore();
+
+    console.log({
+        isMenubarOpen,
+    });
     return (
         <aside
-            // className={`
-            //         fixed top-0 left-0 z-40
-            //         h-screen w-64
-            //         flex flex-col justify-between
-            //         transition-transform duration-300 ease-in-out
-            //         ${isMenubarOpen ? "translate-x-0" : "-translate-x-full"}
-            //         md:translate-x-0
-            //     `}
             className={`
-                    fixed top-0 left-0 z-40
+                    fixed top-0 left-0 z-50
                     h-full w-75 md:w-50
 
                     flex flex-col justify-between
@@ -81,15 +77,9 @@ export default function DesktopNavigation() {
                 `}
             style={{ background: "rgba(255, 255, 255, 0.03)" }}
         >
-            {/* Top Section */}
             <div className='flex flex-col gap-8 p-4'>
                 {/* Logo */}
-                <Link
-                    href='/'
-                    className='block transition duration-100 active:scale-95'
-                >
-                    <MusicLogo />
-                </Link>
+                <MusicLogo />
 
                 <SearchTrigger />
 
@@ -114,7 +104,6 @@ export default function DesktopNavigation() {
                 </div>
             </div>
 
-            {/* Library Section */}
             <nav className='flex h-[calc(100vh-200px)] flex-col gap-8 overflow-y-auto overflow-x-visible border-t border-transparent p-4 transition-colors duration-200 overscroll-contain'>
                 <div className='flex flex-col items-start gap-2'>
                     <div className='px-4 text-sm font-medium leading-9 text-neutral-400'>
@@ -123,7 +112,7 @@ export default function DesktopNavigation() {
                     <LibraryButton
                         href='/users'
                         icon={<User className='size-5 text-neutral-400' />}
-                        label='Profile'
+                        label='Users'
                     />
                     <LibraryButton
                         href='/audios'
@@ -138,8 +127,34 @@ export default function DesktopNavigation() {
                 </div>
             </nav>
 
-            {/* Footer Section */}
-            <div className='flex flex-col gap-5 px-5 py-4 sm:p-4'>
+            <div className='flex flex-col gap-5  py-4 sm:p-4'>
+                <div className=' mb-4 rounded-2xl overflow-hidden relative'>
+                    <div
+                        className='p-4 relative'
+                        style={{
+                            background:
+                                "linear-gradient(135deg, #4a3060 0%, #2d1f4a 60%, #1e1535 100%)",
+                        }}
+                    >
+                        <div
+                            className='absolute inset-0 opacity-30'
+                            style={{
+                                background:
+                                    "radial-gradient(ellipse at top left, rgba(160,100,255,0.3) 0%, transparent 70%)",
+                            }}
+                        />
+
+                        <div className='relative z-10'>
+                            <p className='text-white font-bold text-sm leading-snug'>
+                                Model v6 Pro is here!
+                            </p>
+                            <p className='text-white/60 text-sm mt-1 leading-snug'>
+                                Pushing boundaries to the world&apos;s best AI
+                                music model
+                            </p>
+                        </div>
+                    </div>
+                </div>
                 {/* Language Switcher */}
                 <button className='flex flex-row items-center gap-1.5 self-start px-3 py-2 bg-white/10 hover:bg-white/5 rounded-full text-neutral-300'>
                     <Globe className='size-4' />
