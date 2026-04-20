@@ -1,4 +1,5 @@
 import { PromptRecord } from "@/store/music.store";
+import { motion } from "framer-motion";
 
 export function PulsatingBars({ progress }: { progress: number }) {
     const randomNumber = Math.random() * 24 + 8;

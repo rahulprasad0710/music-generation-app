@@ -264,7 +264,7 @@ export default function ProfilePopupScreen({
                         {/* ── Divider ───────────────────────────────────── */}
                         <div className='border-t border-white/5 mb-3' />
                         {/* ── Recent generations ───────────────────────── */}
-                        <RecentGenerations />
+                        <RecentGenerations showMainTitle={false} />
                         {/* ── Divider + Sign out ───────────────────────── */}
                         <div className='border-t border-white/5 mt-3 pt-3'>
                             <button

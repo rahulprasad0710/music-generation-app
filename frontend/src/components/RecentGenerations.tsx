@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useMusicStore } from "@/store/music.store";
 import { GenerationCard } from "./GenerationCard";
 import { useAuthStore } from "@/store/auth.store";
+import { Audio } from "@/types/music.type";
 
 export function getThumbnailFallbackColor(id: number): string {
     const gradients = [

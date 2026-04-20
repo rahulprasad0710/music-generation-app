@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAudioStore } from "../store/audio.store";
 import { useAllAudioStore } from "@/store/allAudio.store";
 import { GenerationItem } from "./RecentGenerations";
+import { div } from "framer-motion/client";
 
 interface Props {
     q?: string; // search query from parent / search input
@@ -62,7 +63,8 @@ export default function AudioList({ q = "" }: Props) {
                     <p className='text-sm text-gray-400'>No results found.</p>
                 ) : (
                     allAudiosData.map((audio) => (
-                        <GenerationItem key={audio.id} generation={audio} />
+                        // <GenerationItem key={audio.id} generation={[]} />
+                        <div key={audio.id}>List</div>
                     ))
                 )}
             </div>
