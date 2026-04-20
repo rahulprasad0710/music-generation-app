@@ -4,7 +4,7 @@ import { getAudioQueue } from "@/queues/audio.queue";
 interface CreatePromptInput {
     userId: number;
     prompt: string;
-    priority?: number;
+    isPremium: boolean;
 }
 
 export class PromptService {
@@ -14,7 +14,8 @@ export class PromptService {
     }
 
     async create(input: CreatePromptInput) {
-        const { userId, prompt, priority = 1 } = input;
+        const { userId, prompt, isPremium } = input;
+        const priority = isPremium ? 1 : 10;
         const title = PromptService.generateTitle(prompt);
 
         // 1. Persist PENDING

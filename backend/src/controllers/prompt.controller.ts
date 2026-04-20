@@ -27,14 +27,14 @@ export class PromptController {
     }
 
     async create(req: Request, res: Response): Promise<void> {
-        const { verifiedUserId } = req;
+        const { verifiedUserId, verifiedUser } = req;
 
         const payload = req.body;
 
         const data = await promptService.create({
             userId: verifiedUserId,
             prompt: payload.prompt,
-            priority: payload.priority,
+            isPremium: verifiedUser.isPremium,
         });
 
         res.status(200).json({
