@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import UserList from "../../components/UserList";
+import { X } from "lucide-react";
 
 export default function UsersPage() {
     const [input, setInput] = useState("");
@@ -21,29 +22,29 @@ export default function UsersPage() {
         <div className='max-w-3xl mx-auto p-6 flex flex-col gap-6'>
             <h1 className='text-xl font-medium text-gray-100'>Users</h1>
 
-            <form onSubmit={handleSearch} className='flex gap-2'>
+            <form onSubmit={handleSearch} className='relative flex gap-2'>
                 <input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder='Search by name or email...'
-                    className='flex-1 px-3 py-2 rounded-md border border-gray-700
+                    className='flex-1 px-3 py-2 pl-12 rounded-xl border border-gray-700 h-12
                      bg-gray-900 text-white text-sm outline-none
-                     focus:border-indigo-500 transition-colors'
+                     focus:border-neutral-500 transition-colors'
                 />
                 {input && (
                     <button
                         type='button'
                         onClick={handleClear}
-                        className='px-3 py-2 rounded-md text-sm text-gray-400
+                        className='absolute cursor-pointer p-1  text-sm text-gray-400 top-2 left-1 rounded-full bg-neutral-600/5
                        hover:text-white transition-colors'
                     >
-                        Clear
+                        <X className='h-5 w-5' />
                     </button>
                 )}
                 <button
                     type='submit'
-                    className='px-4 py-2 rounded-md bg-indigo-600 text-white
-                     text-sm hover:bg-indigo-500 transition-colors'
+                    className='cursor-pointer px-4 py-2  bg-neutral-700 text-white rounded-2xl
+                     text-sm hover:bg-neutral-800 transition-colors'
                 >
                     Search
                 </button>

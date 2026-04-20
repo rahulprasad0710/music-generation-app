@@ -4,6 +4,7 @@ import { IPromptPayload, postPromptApi } from "@/services/prompt.api";
 import { useAuthStore } from "@/store/auth.store";
 import { useMusicStore } from "@/store/music.store";
 import { useToggleStore } from "@/store/profile.store";
+import { useFirstLoginStore } from "@/store/userFirstLogin.store";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, ArrowRight, Paperclip, Mic, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -24,6 +25,9 @@ export default function PromptScreen() {
     const isActive = promptText.trim().length > 0;
     const [loading, setLoading] = useState(false);
     const [placeholder, setPlaceholder] = useState(0);
+    const isFirstTimeLoggedIn = useFirstLoginStore(
+        (s) => s.isFirstTimeLoggedIn,
+    );
 
     useEffect(() => {
         const id = setInterval(
@@ -92,15 +96,53 @@ export default function PromptScreen() {
                         className='relative mx-auto max-w-full'
                         style={{ height: 137, width: 800 }}
                     >
-                        <span className='absolute inset-0 z-10'>
-                            <i className='Anim12'></i>
-                        </span>
-                        <span className='absolute inset-0 z-20'>
-                            <span className='Anim2'></span>
-                        </span>
+                        {isFirstTimeLoggedIn && user?.id && (
+                            <>
+                                <div className='absolute -inset-[2px] rounded-[36px] overflow-hidden pointer-events-none'>
+                                    <motion.div
+                                        className='absolute'
+                                        style={{
+                                            width: "200%",
+                                            height: "200%",
+                                            top: "-50%",
+                                            left: "-50%",
+                                            background:
+                                                "conic-gradient(from 0deg, transparent 0deg, transparent 120deg, #FF7B16 180deg, #FF9A4D 200deg, transparent 240deg, transparent 360deg)",
+                                        }}
+                                        animate={{ rotate: 360 }}
+                                        transition={{
+                                            duration: 4,
+                                            repeat: Infinity,
+                                            ease: "linear",
+                                        }}
+                                    />
+                                </div>
+
+                                <div className='absolute -inset-[2px] rounded-[36px] overflow-hidden pointer-events-none opacity-60'>
+                                    <motion.div
+                                        className='absolute'
+                                        style={{
+                                            width: "200%",
+                                            height: "200%",
+                                            top: "-50%",
+                                            left: "-50%",
+                                            background:
+                                                "conic-gradient(from 0deg, transparent 0deg, transparent 120deg, #FF7B16 180deg, #FF9A4D 200deg, transparent 240deg, transparent 360deg)",
+                                            filter: "blur(10px)",
+                                        }}
+                                        animate={{ rotate: 360 }}
+                                        transition={{
+                                            duration: 4,
+                                            repeat: Infinity,
+                                            ease: "linear",
+                                        }}
+                                    />
+                                </div>
+                            </>
+                        )}
 
                         <div
-                            className=' relative z-20 h-full w-full rounded-[28px] bg-zinc-900 dark:bg-zinc-900 transition duration-200 dark:border-zinc-800'
+                            className=' relative z-20 h-full w-full rounded-[28px] bg-[#1D2125] dark:bg-[#1D2125] transition duration-200 dark:border-zinc-800'
                             style={{ opacity: 1 }}
                         >
                             <div className='h-full w-full'>
@@ -149,6 +191,7 @@ export default function PromptScreen() {
                                                         e.target.value,
                                                     )
                                                 }
+                                                value={promptText}
                                                 className='px-5 py-5 -mt-5 block outline-none resize-none w-full bg-transparent text-base text-white h-16.5'
                                                 style={{ height: 64 }}
                                             />
@@ -269,7 +312,6 @@ export default function PromptScreen() {
                     </div>
                 </div>
             </div>
-
             <div
                 role='presentation'
                 tabIndex={0}

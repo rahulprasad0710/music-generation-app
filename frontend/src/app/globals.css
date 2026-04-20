@@ -43,6 +43,10 @@ body {
     background: rgba(255, 255, 255, 0.03);
 }
 
+.bg-brand-black-100 {
+    background-color: rgb(22 25 28);
+}
+
 /* NOT Tailwind → custom scrollbar styling */
 .pretty-scrollbar {
     scrollbar-width: thin; /* Firefox */

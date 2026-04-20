@@ -17,7 +17,7 @@ function InputWrapper({
 }: InputWrapperProps) {
     return (
         <div className='flex flex-col gap-1.5'>
-            <label className='text-sm font-semibold text-neutral-600'>
+            <label className='text-sm font-semibold text-neutral-100 mb-1'>
                 {label}
             </label>
 

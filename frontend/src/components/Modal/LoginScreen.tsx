@@ -17,6 +17,7 @@ import { LoginFormValues, loginSchema } from "@/validations/auth.schema";
 import InputWrapper from "../molecules/InputWrapper";
 import { loginApi } from "@/services/auth.api";
 import { useAuthStore } from "@/store/auth.store";
+import { useFirstLoginStore } from "@/store/userFirstLogin.store";
 
 interface LoginFormProps {
     onSwitch: () => void;
@@ -25,6 +26,7 @@ interface LoginFormProps {
 
 function LoginForm({ onSwitch, onClose }: LoginFormProps) {
     const [showPw, setShowPw] = useState(false);
+    const { markAsReturningUser } = useFirstLoginStore();
 
     const {
         register,
@@ -32,27 +34,12 @@ function LoginForm({ onSwitch, onClose }: LoginFormProps) {
         formState: { errors, isValid, dirtyFields },
     } = useForm<LoginFormValues>({
         resolver: zodResolver(loginSchema),
-        mode: "onChange",
         defaultValues: {
             email: "",
             password: "",
             rememberMe: false,
         },
     });
-
-    // if (done) {
-    //     return (
-    //         <div className='flex flex-col items-center gap-4 py-10'>
-    //             <div className='w-14 h-14 rounded-full bg-neutral-100 flex items-center justify-center'>
-    //                 <CheckCircle2 size={28} className='text-neutral-600' />
-    //             </div>
-    //             <h3 className='text-xl font-bold text-gray-900'>Signed in!</h3>
-    //             <p className='text-sm text-gray-500'>
-    //                 Welcome back. You&apos;re now logged in.
-    //             </p>
-    //         </div>
-    //     );
-    // }
 
     const handleSubmitForm = async (payload: LoginFormValues) => {
         console.log({
@@ -74,6 +61,7 @@ function LoginForm({ onSwitch, onClose }: LoginFormProps) {
             console.log(response);
 
             if (success) {
+                markAsReturningUser();
                 onClose();
             }
         } catch (error) {
@@ -82,7 +70,7 @@ function LoginForm({ onSwitch, onClose }: LoginFormProps) {
     };
 
     return (
-        <div className='p-10'>
+        <div className='p-10 bg-brand-black-100 rounded-[28px]'>
             <form
                 onSubmit={handleSubmit(handleSubmitForm)}
                 noValidate
@@ -100,9 +88,9 @@ function LoginForm({ onSwitch, onClose }: LoginFormProps) {
                         type='email'
                         placeholder='jane@example.com'
                         autoComplete='email'
-                        className={`w-full h-11 pl-9 pr-4 rounded-xl border text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none transition
-                                    focus:bg-white focus:ring-2 focus:ring-neutral-300
-                                    ${errors.email && dirtyFields.email ? "border-red-400" : "border-gray-200 focus:border-neutral-400"}`}
+                        className={`w-full h-12 pl-9 pr-4 rounded-xl border text-sm bg-brand-black-100 text-neutral-100 placeholder:text-neutral-500 outline-none transition 
+                                focus:bg-neutral-800 focus:ring-0.5 focus:ring-neutral-400
+                                ${errors.email && dirtyFields.email ? "border-red-500" : "border-neutral-700 focus:border-neutral-500"}`}
                     />
                 </InputWrapper>
 
@@ -118,9 +106,9 @@ function LoginForm({ onSwitch, onClose }: LoginFormProps) {
                         type={showPw ? "text" : "password"}
                         placeholder='Your password'
                         autoComplete='current-password'
-                        className={`w-full h-11 pl-9 pr-10 rounded-xl border text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none transition
-            focus:bg-white focus:ring-2 focus:ring-neutral-300
-            ${errors.password && dirtyFields.password ? "border-red-400" : "border-gray-200 focus:border-neutral-400"}`}
+                        className={`w-full h-12 pl-9 pr-4 rounded-xl border text-sm bg-brand-black-100 text-neutral-100 placeholder:text-neutral-500 outline-none transition 
+                                focus:bg-neutral-800 focus:ring-0.5 focus:ring-neutral-400
+                                ${errors.email && dirtyFields.email ? "border-red-500" : "border-neutral-700 focus:border-neutral-500"}`}
                     />
                     <button
                         type='button'
@@ -172,12 +160,12 @@ function LoginForm({ onSwitch, onClose }: LoginFormProps) {
                 <button
                     type='submit'
                     disabled={!isValid}
-                    className={`mt-1 h-11 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2
-          ${
-              isValid
-                  ? "bg-neutral-600 hover:bg-neutral-700 active:scale-[0.98] text-white shadow-md shadow-neutral-900 cursor-pointer"
-                  : "bg-gray-100 text-gray-400 cursor-not-allowed"
-          }`}
+                    className={`mt-1 h-11  text-sm font-bold transition-all flex items-center justify-center gap-2 rounded-full p-4  border border-white/20 
+                    ${
+                        isValid
+                            ? "bg-neutral-50 hover:bg-neutral-50 active:scale-[0.98] text-neutral-800 shadow-md shadow-neutral-900 cursor-pointer "
+                            : " text-sm font-semibold leading-tight text-white  transition-all active:scale-95"
+                    }`}
                 >
                     Login {isValid && <ArrowRight size={15} />}
                 </button>
@@ -187,7 +175,7 @@ function LoginForm({ onSwitch, onClose }: LoginFormProps) {
                     <button
                         type='button'
                         onClick={onSwitch}
-                        className='font-semibold text-neutral-600 hover:text-neutral-800 transition-colors'
+                        className='font-semibold text-neutral-600 hover:text-neutral-800 transition-colors cursor-pointer'
                     >
                         Create one
                     </button>

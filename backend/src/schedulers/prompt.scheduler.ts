@@ -1,6 +1,9 @@
 import cron from "node-cron";
 import { prisma } from "@/lib/prisma";
 import { getAudioQueue } from "@/queues/audio.queue";
+import { UserService } from "@/services/user.service";
+
+const userService = new UserService();
 
 export function startPromptScheduler() {
     // Every 60 seconds
@@ -29,9 +32,16 @@ export function startPromptScheduler() {
             for (const p of pendingPrompts) {
                 if (!p.userId) continue;
 
+                const user = await userService.getUserById(p.userId);
+
                 const job = await queue.add(
                     "generate-audio",
-                    { promptId: p.id, userId: p.userId, prompt: p.prompt },
+                    {
+                        promptId: p.id,
+                        userId: p.userId,
+                        prompt: p.prompt,
+                        isPremium: user?.isPremium ? true : false,
+                    },
                     { priority: p.priority, jobId: `prompt-${p.id}` },
                 );
 

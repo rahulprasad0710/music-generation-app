@@ -3,7 +3,6 @@
 import { useSocket } from "@/hooks/useSocket";
 import { useAuthStore } from "@/store/auth.store";
 import RecentGenerations from "@/components/RecentGenerations";
-import DesktopNavigation from "@/components/Sidebar";
 import PromptScreen from "@/components/PromptScreen";
 
 export default function HomePage() {

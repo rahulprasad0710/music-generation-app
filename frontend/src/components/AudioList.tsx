@@ -2,10 +2,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useAudioStore } from "../store/audio.store";
 import { useAllAudioStore } from "@/store/allAudio.store";
 import { GenerationItem } from "./RecentGenerations";
 import { div } from "framer-motion/client";
+import { AudioGeneration, extractVersion } from "@/store/audio.store";
+import { Audio } from "@/types/music.type";
 
 interface Props {
     q?: string; // search query from parent / search input
@@ -53,6 +54,33 @@ export default function AudioList({ q = "" }: Props) {
     const isFirstPage = pageIndex === 0;
     const isLastPage = !hasMore;
 
+    const mapAudioToGeneration = (
+        allAudiosData: Audio[],
+    ): AudioGeneration[] => {
+        return allAudiosData.map(
+            (audio): AudioGeneration => ({
+                id: audio.id,
+                userId: audio.userId,
+                promptId: audio.promptId,
+                title: audio.title,
+                version: extractVersion(audio.title),
+                inputPrompt: audio.inputPrompt,
+                audioUrl: audio.audioUrl,
+                hlsUrl: audio.hlsUrl,
+                thumbnail: audio.thumbnail,
+                durationMs: audio.durationMs,
+                playCount: audio.playCount,
+                likeCount: audio.likeCount,
+                createdAt: audio.createdAt,
+                updatedAt: audio.updatedAt,
+                progress: 100,
+                status: "COMPLETED",
+            }),
+        );
+    };
+
+    const newAudio = mapAudioToGeneration(allAudiosData);
+
     return (
         <div className='flex flex-col gap-4'>
             {/* Results */}
@@ -62,15 +90,14 @@ export default function AudioList({ q = "" }: Props) {
                 ) : allAudiosData?.length === 0 ? (
                     <p className='text-sm text-gray-400'>No results found.</p>
                 ) : (
-                    allAudiosData.map((audio) => (
-                        // <GenerationItem key={audio.id} generation={[]} />
-                        <div key={audio.id}>List</div>
+                    newAudio.map((audio: AudioGeneration) => (
+                        <GenerationItem key={audio.id} generation={audio} />
                     ))
                 )}
             </div>
 
             {/* Pagination controls */}
-            <div className='flex items-center gap-3 mt-4'>
+            <div className='flex items-center gap-3 mt-4 justify-between'>
                 <button
                     onClick={handlePrev}
                     disabled={isFirstPage || isLoading}

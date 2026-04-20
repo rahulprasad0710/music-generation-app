@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import AudioList from "../../components/AudioList";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 
 export default function AudioPage() {
     const [query, setQuery] = useState("");
@@ -13,6 +13,10 @@ export default function AudioPage() {
         setSearch(query);
     };
 
+    const handleClear = () => {
+        setQuery("");
+    };
+
     return (
         <div className='max-w-2xl mx-auto p-6 flex flex-col gap-6 '>
             <div
@@ -20,18 +24,33 @@ export default function AudioPage() {
                 aria-haspopup='menu'
                 aria-expanded='false'
             >
-                <input
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder='Search audio...'
-                    className='w-full  z-2 flex h-10  bg-zinc-900 flex-row items-center gap-2 rounded-[30px] border border-alpha-light-8 px-6 text-sm hover:border-transparent hover:bg-white/8'
-                />
-                <div
-                    onClick={handleSearch}
-                    className='absolute top-2.25 right-5 cursor-pointer'
-                >
-                    <Search className='size-5 flex-none text-neutral-5000' />
-                </div>
+                <form onSubmit={handleSearch} className='relative flex gap-2'>
+                    <input
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        placeholder='Search audios...'
+                        className='flex-1 px-3 py-2 pl-12 rounded-xl border border-gray-700 h-12
+                     bg-gray-900 text-white text-sm outline-none
+                     focus:border-neutral-500 transition-colors'
+                    />
+                    {query && (
+                        <button
+                            type='button'
+                            onClick={handleClear}
+                            className='absolute cursor-pointer p-1  text-sm text-gray-400 top-2 left-1 rounded-full bg-neutral-600/5
+                       hover:text-white transition-colors'
+                        >
+                            <X className='h-5 w-5' />
+                        </button>
+                    )}
+                    <button
+                        type='submit'
+                        className='cursor-pointer px-4 py-2  bg-neutral-700 text-white rounded-2xl
+                     text-sm hover:bg-neutral-800 transition-colors'
+                    >
+                        Search
+                    </button>
+                </form>
             </div>
 
             <AudioList q={search} />

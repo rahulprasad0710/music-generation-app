@@ -33,7 +33,7 @@ interface AudioStore {
     setCurrentlyPlaying: (id: number | null) => void;
 }
 
-function extractVersion(title: string): string {
+export function extractVersion(title: string): string {
     const match = title.match(/version\s+([\w]+)/i);
     if (match) return `v${match[1]}`;
     const romanMatch = title.match(/—\s*Version\s+([IVXivx]+)/i);

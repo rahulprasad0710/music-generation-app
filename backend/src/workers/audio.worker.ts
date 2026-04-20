@@ -4,69 +4,135 @@ import { RedisConfig } from "@config/redis.config";
 import { SocketManager } from "@/socket/socket.manager";
 import { AudioJobData } from "@/queues/audio.queue";
 
-// ─── Simulate LLM streaming ───────────────────────────────────────────────
+function getGenerationDuration(isPremium: boolean): number {
+    if (isPremium) {
+        return Math.floor(Math.random() * 10_000) + 50_000;
+    } else {
+        return Math.floor(Math.random() * 18_000) + 72_000;
+    }
+}
+
+function shouldFail(elapsedMs: number, totalMs: number): boolean {
+    const progress = elapsedMs / totalMs;
+
+    // Can only fail after 25% progress
+    if (progress < 0.25) return false;
+
+    // 15% base chance to fail, checked every tick
+    // Higher chance around 30-50% progress (mid-generation failure)
+    const midGenerationZone = progress >= 0.3 && progress <= 0.5;
+    const failChance = midGenerationZone ? 0.06 : 0.02;
+
+    return Math.random() < failChance;
+}
+
 function simulateLLMStream(
     job: Job<AudioJobData>,
     userId: number,
-    durationMs: number,
-): Promise<void> {
+    totalMs: number,
+    isPremium: boolean,
+): Promise<{ failed: boolean; reason?: string }> {
     return new Promise((resolve) => {
-        const intervalMs = 3000; // emit progress every 2s
+        // Premium: tick every 4-6s | Free: tick every 6-10s
+        const baseInterval = isPremium ? 4_000 : 7_000;
+        const intervalMs = baseInterval + Math.floor(Math.random() * 3_000);
+
         let elapsed = 0;
+
+        const messages = [
+            "Analyzing your prompt…",
+            "Composing melody structure…",
+            "Generating rhythm patterns…",
+            "Layering instruments…",
+            "Applying audio effects…",
+            "Mixing tracks…",
+            "Finalizing audio output…",
+            "Almost there…",
+        ];
+        let messageIndex = 0;
 
         const timer = setInterval(async () => {
             elapsed += intervalMs;
+
+            // ── Random failure check ─────────────────────────────────────
+            if (shouldFail(elapsed, totalMs)) {
+                clearInterval(timer);
+                resolve({
+                    failed: true,
+                    reason: pickRandom([
+                        "Audio synthesis engine timeout",
+                        "Model overloaded — generation failed",
+                        "Unexpected error during composition",
+                        "GPU memory exhausted during generation",
+                    ]),
+                });
+                return;
+            }
+
             const progress = Math.min(
-                Math.round((elapsed / durationMs) * 100),
+                Math.round((elapsed / totalMs) * 100),
                 99,
             );
 
             await job.updateProgress(progress);
 
-            // Real-time progress event to the specific user
+            const message =
+                messages[messageIndex] ?? "Processing your generation…";
+            messageIndex = Math.min(messageIndex + 1, messages.length - 1);
+
             SocketManager.emitToUser(userId, "job:progress", {
                 promptId: job.data.promptId,
                 progress,
+                message,
+                isPremium,
             });
 
-            if (elapsed >= durationMs) {
+            if (elapsed >= totalMs) {
                 clearInterval(timer);
-                resolve();
+                resolve({ failed: false });
             }
         }, intervalMs);
     });
 }
 
-// ─── Simulate audio generation (returns fake URLs) ────────────────────────
+// Random
+function pickRandom<T>(arr: T[]): T {
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+
+//  audio generation
 function generateFakeAudios(
     prompt: string,
 ): Array<{ title: string; audioUrl: string; durationMs: number }> {
     const seed = Date.now();
+    const styles = ["Orchestral", "Lo-Fi", "Electronic", "Acoustic", "Jazz"];
+    const style = pickRandom(styles);
+
     return [
         {
-            title: `${prompt.slice(0, 40)} — Version I`,
+            title: `${prompt.slice(0, 40)} — ${style} Mix I`,
             audioUrl: `https://storage.musicgpt.fake/audio/${seed}-v1.mp3`,
-            durationMs: Math.floor(Math.random() * 60000) + 30000,
+            durationMs: Math.floor(Math.random() * 60_000) + 30_000,
         },
         {
-            title: `${prompt.slice(0, 40)} — Version II`,
+            title: `${prompt.slice(0, 40)} — ${style} Mix II`,
             audioUrl: `https://storage.musicgpt.fake/audio/${seed}-v2.mp3`,
-            durationMs: Math.floor(Math.random() * 60000) + 30000,
+            durationMs: Math.floor(Math.random() * 60_000) + 30_000,
         },
     ];
 }
 
-// ─── Worker ───────────────────────────────────────────────────────────────
+// ! Worker
 export async function startAudioWorker() {
     const redis = await RedisConfig.getInstance();
 
     const worker = new Worker<AudioJobData>(
         "audio-generation",
         async (job: Job<AudioJobData>) => {
-            const { promptId, userId, prompt } = job.data;
-            const generationMs = Math.floor(Math.random() * 5000) + 5000; // 5–10s
+            const { promptId, userId, prompt, isPremium = false } = job.data;
+            const totalMs = getGenerationDuration(isPremium);
 
-            // ── 1. Mark PROCESSING ──────────────────────────────────────────────
+            // ── 1. Mark PROCESSING ───────────────────────────────────────────
             await prisma.prompt.update({
                 where: { id: promptId },
                 data: {
@@ -77,25 +143,44 @@ export async function startAudioWorker() {
                 },
             });
 
-            // ── 2. Log JobEvent ─────────────────────────────────────────────────
+            // ── 2. Log JobEvent ──────────────────────────────────────────────
             await prisma.jobEvent.create({
                 data: {
                     promptId,
                     type: "JOB_PROCESSING",
-                    payload: { jobId: job.id, attemptsMade: job.attemptsMade },
+                    payload: {
+                        jobId: job.id,
+                        attemptsMade: job.attemptsMade,
+                        estimatedMs: totalMs,
+                        isPremium,
+                    },
                 },
             });
 
-            // ── 3. Emit real-time to user ────────────────────────────────────────
+            // ── 3. Emit processing start to user ─────────────────────────────
             SocketManager.emitToUser(userId, "job:processing", {
                 promptId,
-                message: "Your music is being generated…",
+                estimatedSeconds: Math.round(totalMs / 1000),
+                isPremium,
+                message: isPremium
+                    ? "Premium generation started — estimated ~50-60s"
+                    : "Generation queued — estimated ~1.2-1.5 min",
             });
 
-            // ── 4. Simulate LLM streaming ────────────────────────────────────────
-            await simulateLLMStream(job, userId, generationMs);
+            // ── 4. Stream progress with random failure chance ─────────────────
+            const { failed, reason } = await simulateLLMStream(
+                job,
+                userId,
+                totalMs,
+                isPremium,
+            );
 
-            // ── 5. Create 2 Audio records ────────────────────────────────────────
+            // ── 5. Handle random mid-generation failure ───────────────────────
+            if (failed) {
+                throw new Error(reason ?? "Generation failed unexpectedly");
+            }
+
+            // ── 6. Create Audio records ───────────────────────────────────────
             const fakeAudios = generateFakeAudios(prompt);
 
             const audios = await Promise.all(
@@ -113,7 +198,7 @@ export async function startAudioWorker() {
                 ),
             );
 
-            // ── 6. Mark COMPLETED ────────────────────────────────────────────────
+            // ── 7. Mark COMPLETED ─────────────────────────────────────────────
             const completedPrompt = await prisma.prompt.update({
                 where: { id: promptId },
                 data: {
@@ -125,7 +210,7 @@ export async function startAudioWorker() {
                 include: { audios: true },
             });
 
-            // ── 7. Log JobEvent ─────────────────────────────────────────────────
+            // ── 8. Log JobEvent ───────────────────────────────────────────────
             await prisma.jobEvent.create({
                 data: {
                     promptId,
@@ -134,7 +219,7 @@ export async function startAudioWorker() {
                 },
             });
 
-            // ── 8. Emit completion to user ───────────────────────────────────────
+            // ── 9. Emit completion ────────────────────────────────────────────
             SocketManager.emitToUser(userId, "job:completed", {
                 promptId,
                 audios: completedPrompt.audios,
@@ -144,11 +229,11 @@ export async function startAudioWorker() {
         },
         {
             connection: redis,
-            concurrency: 5, // handle 5 jobs at once
+            concurrency: 5,
         },
     );
 
-    // ─── Worker error handler (runs AFTER all retries exhausted) ──────────
+    // ── failed handler stays exactly the same ─────────────────────────────
     worker.on("failed", async (job, err) => {
         if (!job) return;
         const { promptId, userId } = job.data;

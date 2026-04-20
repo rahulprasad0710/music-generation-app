@@ -8,12 +8,13 @@ import ProfilePopupScreen from "./ProfilePopUpScreen";
 import { useToggleStore } from "@/store/profile.store";
 import MusicLogo from "./molecules/MusicGptLogo";
 import Link from "next/link";
+import { GradientAvatar } from "./molecules/ProfileIcon";
 
 const Header = () => {
     const { user, isAuthenticating } = useAuthStore((state) => state);
     const { isOpen, setOpen, isSignUpOpen, setSignUpOpen } = useToggleStore();
     const buttonRef = useRef<HTMLButtonElement>(null);
-    const { isMenubarOpen, setMenubarToggle } = useToggleStore();
+    const { isMenubarOpen } = useToggleStore();
 
     return (
         <header className=' fixed left-0 top-0 z-50 h-20 w-[calc(100vw-20px)] pointer-events-auto bg-transparent'>
@@ -50,13 +51,19 @@ const Header = () => {
                             ref={buttonRef}
                             type='button'
                             onClick={() => setOpen(true)}
-                            className='relative outline-none h-10 w-10'
+                            className='relative outline-none h-10 w-10 cursor-pointer'
                         >
-                            <span className='h-full w-full rounded-full absolute inset-0 dark:bg-neutral-900' />
+                            <span className=' h-full w-full rounded-full absolute inset-0 dark:bg-neutral-900' />
 
                             <span className='absolute inset-px rounded-full h-9.5 w-9.5 bg-gray-800 text-white flex items-center justify-center text-sm font-semibold'>
                                 {user?.name?.charAt(0)?.toUpperCase() || "U"}
                             </span>
+                            <GradientAvatar
+                                initial={
+                                    user?.name?.charAt(0)?.toUpperCase() || "U"
+                                }
+                                showNotification={true}
+                            />
                         </button>
                     )}
                 </div>

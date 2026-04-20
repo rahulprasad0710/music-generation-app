@@ -26,20 +26,25 @@ export function useSocket(token: string | null) {
         });
 
         // ── Bind events to Zustand ──────────────────────────────────────────
-        socket.on("job:processing", ({ promptId }: { promptId: number }) => {
-            setProcessing(promptId);
-        });
+        socket.on(
+            "job:processing",
+            ({ promptId, message }: { promptId: number; message?: string }) => {
+                setProcessing(promptId, message);
+            },
+        );
 
         socket.on(
             "job:progress",
             ({
                 promptId,
                 progress,
+                message,
             }: {
                 promptId: number;
                 progress: number;
+                message?: string;
             }) => {
-                setProgress(promptId, progress);
+                setProgress(promptId, progress, message);
             },
         );
 

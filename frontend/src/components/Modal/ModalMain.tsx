@@ -72,7 +72,7 @@ export const AnimatedModal: React.FC<ModalProps> = ({
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 40 }}
                         transition={{ duration: 0.2 }}
-                        className={`relative w-full max-w-lg rounded-2xl bg-white dark:bg-neutral-900 shadow-xl ${className}`}
+                        className={`relative w-full max-w-lg rounded-[28px] bg-brand-black-100 dark:bg-brand-black-100 shadow-xl ${className}`}
                     >
                         {showCloseButton && (
                             <button

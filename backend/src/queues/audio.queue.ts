@@ -5,6 +5,7 @@ export interface AudioJobData {
     promptId: number;
     userId: number;
     prompt: string;
+    isPremium: boolean;
 }
 
 let audioQueueInstance: Queue<AudioJobData> | null = null;

@@ -25,14 +25,15 @@ export interface PromptRecord {
     audios: Audio[];
     error: string | null;
     createdAt: string;
+    message?: string;
 }
 
 interface MusicStore {
     prompts: PromptRecord[];
     // Actions
     addPrompt: (p: PromptRecord) => void;
-    setProcessing: (promptId: number) => void;
-    setProgress: (promptId: number, progress: number) => void;
+    setProcessing: (promptId: number, message?: string) => void;
+    setProgress: (promptId: number, progress: number, message?: string) => void;
     setCompleted: (promptId: number, audios: Audio[]) => void;
     setFailed: (promptId: number, error: string) => void;
     hydratePrompts: (prompts: PromptRecord[]) => void;
@@ -47,19 +48,23 @@ export const useMusicStore = create<MusicStore>()(
                 s.prompts.unshift(p);
             }),
 
-        setProcessing: (promptId) =>
+        setProcessing: (promptId, message) =>
             set((s) => {
                 const p = s.prompts.find((x) => x.id === promptId);
                 if (p) {
                     p.status = "PROCESSING";
                     p.progress = 0;
+                    p.message = message;
                 }
             }),
 
-        setProgress: (promptId, progress) =>
+        setProgress: (promptId, progress, message) =>
             set((s) => {
                 const p = s.prompts.find((x) => x.id === promptId);
-                if (p) p.progress = progress;
+                if (p) {
+                    p.progress = progress;
+                    p.message = message;
+                }
             }),
 
         setCompleted: (promptId, audios) =>

@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import RecentGenerations from "./RecentGenerations";
 import { logoutApi } from "@/services/auth.api";
 import { useAuthStore } from "@/store/auth.store";
+import { GradientAvatar } from "./molecules/ProfileIcon";
 
 interface Audio {
     id: number;
@@ -30,29 +31,6 @@ interface ProfilePopupProps {
     anchorRef: React.RefObject<HTMLButtonElement | null>;
     user: User;
 }
-
-function formatDuration(ms: number | null | undefined) {
-    if (!ms) return null;
-    const s = Math.floor(ms / 1000);
-    return `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, "0")}`;
-}
-
-function extractVersion(title: string) {
-    const parts = title.split(" — ");
-    return parts.length > 1 ? parts[parts.length - 1] : null;
-}
-
-function extractName(title: string) {
-    return title.split(" — ").slice(0, -1).join(" — ") || title;
-}
-
-const STATUS_DOT: Record<Audio["status"], string> = {
-    PENDING: "bg-zinc-500",
-    QUEUED: "bg-yellow-500",
-    PROCESSING: "bg-violet-500 shadow-[0_0_6px_rgba(139,92,246,0.8)]",
-    COMPLETED: "bg-emerald-500",
-    FAILED: "bg-red-500",
-};
 
 export default function ProfilePopupScreen({
     isOpen,
@@ -135,7 +113,7 @@ export default function ProfilePopupScreen({
                     transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
                     style={{
                         position: "fixed",
-                        top: pos.top - 2,
+                        top: pos.top + 2,
                         right: pos.right - 18,
                         transformOrigin: "top right",
                         zIndex: 65,
@@ -152,7 +130,7 @@ export default function ProfilePopupScreen({
                     <div
                         className='absolute inset-0 -z-10 rounded-[28px]'
                         style={{
-                            background: "rgba(18, 18, 20, 0.82)",
+                            background: "#1D2125",
                             backdropFilter: "blur(40px) saturate(160%)",
                             WebkitBackdropFilter: "blur(40px) saturate(160%)",
                         }}
@@ -163,12 +141,13 @@ export default function ProfilePopupScreen({
                         <div className='flex items-center justify-between mb-4'>
                             <div className='flex items-center gap-3'>
                                 {/* Avatar */}
-                                <div className='relative shrink-0 w-14 h-14'>
-                                    <span className='block absolute inset-0 rounded-full bg-zinc-700' />
-                                    <span className='absolute inset-[2px] rounded-full bg-zinc-800 text-white text-lg font-semibold flex items-center justify-center'>
-                                        {user.name.charAt(0).toUpperCase()}
-                                    </span>
-                                </div>
+                                <GradientAvatar
+                                    initial={
+                                        user?.name?.charAt(0)?.toUpperCase() ||
+                                        "J"
+                                    }
+                                    showNotification={false}
+                                />
                                 {/* Name + handle */}
                                 <div className='leading-snug'>
                                     <p className='text-[15px] font-semibold text-white tracking-tight truncate max-w-[200px]'>
@@ -269,8 +248,8 @@ export default function ProfilePopupScreen({
                         <div className='border-t border-white/5 mt-3 pt-3'>
                             <button
                                 onClick={handleLogout}
-                                className='
-                                w-full flex items-center gap-2.5 px-2 py-2 rounded-xl
+                                className=' cursor-pointer
+                                w-full flex items-center gap-2.5 px-2 py-2 rounded-xl h-10
                                 text-sm text-white/50 hover:text-red-400 hover:bg-red-500/8
                                 transition-all duration-150 active:scale-[0.98]
                             '

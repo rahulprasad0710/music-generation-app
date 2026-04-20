@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAudioStore, AudioGeneration } from "@/store/audio.store";
 import Image from "next/image";
 import { useMusicStore } from "@/store/music.store";
-import { GenerationCard } from "./GenerationCard";
 import { useAuthStore } from "@/store/auth.store";
-import { Audio } from "@/types/music.type";
+import { GenerationCard2 } from "./GenerationCard2";
 
 export function getThumbnailFallbackColor(id: number): string {
     const gradients = [
@@ -38,11 +37,23 @@ export function MusicNoteIcon({ className }: { className?: string }) {
     );
 }
 
-function PlayIcon({ className }: { className?: string }) {
+export function PlayIcon() {
     return (
-        <svg viewBox='0 0 24 24' fill='currentColor' className={className}>
-            <path d='M8 5v14l11-7L8 5Z' />
-        </svg>
+        <div className='relative flex items-center justify-center w-10 h-10 group cursor-pointer'>
+            <span className='absolute inset-0 rounded-full bg-white/20 scale-0 group-hover:scale-100 transition-transform duration-200' />
+            <svg
+                className='relative z-10'
+                width='22'
+                height='22'
+                viewBox='0 0 24 24'
+                fill='none'
+            >
+                <polygon
+                    points='6,4 20,12 6,20'
+                    fill='rgba(255,255,255,0.85)'
+                />
+            </svg>
+        </div>
     );
 }
 
@@ -117,9 +128,9 @@ export function GenerationItem({
     };
 
     const fallbackColor = getThumbnailFallbackColor(generation.id);
-
+    const [isHovered, setIsHovered] = useState(false);
     return (
-        <div className='group relative flex items-center gap-4 rounded-xl px-3 py-2.5 hover:bg-white/5 transition-colors duration-200'>
+        <div className=' relative flex items-center gap-4 rounded-xl px-3 py-2.5 hover:bg-white/5 transition-colors duration-200'>
             {/* Thumbnail */}
             <button
                 onClick={togglePlay}
@@ -136,24 +147,35 @@ export function GenerationItem({
                     <div
                         className={`h-full w-full ${fallbackColor} flex items-center justify-center`}
                     >
-                        {generation.progress}
-                        <MusicNoteIcon className='h-5 w-5 text-white/70' />
+                        <div
+                            className='relative flex items-center justify-center w-10 h-10 cursor-pointer'
+                            onMouseEnter={() => setIsHovered(true)}
+                            onMouseLeave={() => setIsHovered(false)}
+                        >
+                            {isHovered ? (
+                                <PlayIcon />
+                            ) : (
+                                <MusicNoteIcon className='h-5 w-5 text-white/70' />
+                            )}
+                        </div>
                     </div>
                 )}
                 {/* Play/Pause overlay */}
-                <span
-                    className={`
-            absolute inset-0 flex items-center justify-center bg-black/40
-            transition-opacity duration-150
-            ${isPlaying ? "opacity-100" : "opacity-0 group-hover:opacity-100"}
-          `}
+                <div
+                    className={`h-full w-full ${fallbackColor} flex items-center justify-center`}
                 >
-                    {isPlaying ? (
-                        <PauseIcon className='h-5 w-5 text-white' />
-                    ) : (
-                        <PlayIcon className='h-5 w-5 text-white' />
-                    )}
-                </span>
+                    <div
+                        className='relative flex items-center justify-center w-10 h-10 cursor-pointer'
+                        onMouseEnter={() => setIsHovered(true)}
+                        onMouseLeave={() => setIsHovered(false)}
+                    >
+                        {isHovered ? (
+                            <PlayIcon />
+                        ) : (
+                            <MusicNoteIcon className='h-5 w-5 text-white/70' />
+                        )}
+                    </div>
+                </div>
             </button>
 
             {/* Info */}
@@ -248,7 +270,18 @@ export default function RecentGenerations(props: IRecentGenerationsProps) {
 
                 <div>
                     {prompts.map((p) => (
-                        <GenerationCard key={p.id} record={p} />
+                        <div key={`${p.id}-v1`}>
+                            <GenerationCard2
+                                version={1}
+                                key={`${p.id}-v1`}
+                                record={p}
+                            />
+                            <GenerationCard2
+                                version={2}
+                                key={`${p.id}-v2`}
+                                record={p}
+                            />
+                        </div>
                     ))}
                 </div>
 

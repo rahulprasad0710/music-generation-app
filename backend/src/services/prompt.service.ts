@@ -29,7 +29,12 @@ export class PromptService {
 
             const job = await queue.add(
                 "generate-audio",
-                { promptId: createdPrompt.id, userId, prompt },
+                {
+                    promptId: createdPrompt.id,
+                    userId,
+                    prompt,
+                    isPremium,
+                },
                 {
                     priority,
                     jobId: `prompt-${createdPrompt.id}`, // idempotency key
