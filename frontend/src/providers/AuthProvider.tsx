@@ -6,7 +6,6 @@ import { getMeApi } from "@/services/auth.api";
 import Header from "@/components/Header";
 import DesktopNavigation from "@/components/Sidebar";
 import { Toaster } from "sonner";
-import { toast } from "sonner";
 
 export default function AuthProvider({
     children,
@@ -36,13 +35,6 @@ export default function AuthProvider({
         initAuth();
     }, [setUser, setAuthenticating, setToken]);
 
-    if (isAuthenticating) {
-        return (
-            <div className='h-screen flex items-center justify-center'>
-                <div className='w-8 h-8 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin'></div>
-            </div>
-        );
-    }
     return (
         <main className='min-h-screen bg-black text-white'>
             <Header />

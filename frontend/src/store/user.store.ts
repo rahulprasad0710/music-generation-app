@@ -1,5 +1,6 @@
 import { getAllUsersApi } from "@/services/user.api";
 import { create } from "zustand";
+import { registerReset } from "@/store";
 
 export interface UserResult {
     id: number;
@@ -29,28 +30,38 @@ interface UserStore {
     reset: () => void;
 }
 
-export const useUserStore = create<UserStore>((set) => ({
+const initialState = {
     users: [],
-    isLoading: false,
     hasMore: false,
+    isLoading: false,
     error: null,
+    nextCursor: null,
+};
 
-    fetchUsers: async (q, cursor) => {
-        set({ isLoading: true, error: null });
-        try {
-            const data = await getAllUsersApi(q, cursor);
-            set({
-                users: data.results,
-                hasMore: data.hasMore,
-            });
-            return data.nextCursor;
-        } catch (err) {
-            set({ error: "Failed to fetch users" });
-            return null;
-        } finally {
-            set({ isLoading: false });
-        }
-    },
+export const useUserStore = create<UserStore>((set) => {
+    const store = {
+        ...initialState,
 
-    reset: () => set({ users: [], hasMore: false, error: null }),
-}));
+        fetchUsers: async (q: string | null, cursor: string | null) => {
+            set({ isLoading: true, error: null });
+            try {
+                const data = await getAllUsersApi(q, cursor);
+                set({
+                    users: data.results,
+                    hasMore: data.hasMore,
+                });
+                return data.nextCursor;
+            } catch (err) {
+                set({ error: "Failed to fetch users" });
+                return null;
+            } finally {
+                set({ isLoading: false });
+            }
+        },
+
+        reset: () => set(initialState),
+    };
+
+    registerReset(store.reset);
+    return store;
+});

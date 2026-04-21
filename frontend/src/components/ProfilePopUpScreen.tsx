@@ -8,6 +8,7 @@ import { logoutApi } from "@/services/auth.api";
 import { useAuthStore } from "@/store/auth.store";
 import { GradientAvatar } from "./molecules/ProfileIcon";
 import AudioGeneration from "./AudioGeneration";
+import { resetAllStores } from "@/store";
 
 interface User {
     name: string;
@@ -39,6 +40,7 @@ export default function ProfilePopupScreen({
 
             if (response?.success) {
                 logoutFromStore();
+                resetAllStores();
             }
         } catch (error) {
             console.log({

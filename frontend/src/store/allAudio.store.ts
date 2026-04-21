@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { getAllAudiosApi } from "../services/audio.api";
-
+import { registerReset } from "@/store";
 import { Audio } from "@/types/music.type";
 
 interface AudioStore {
@@ -15,30 +15,40 @@ interface AudioStore {
     reset: () => void;
 }
 
-export const useAllAudioStore = create<AudioStore>((set) => ({
+const initialState = {
     allAudiosData: [],
     isLoading: false,
     hasMore: false,
     nextCursor: null,
+};
 
-    fetchAllAudios: async (q, cursor) => {
-        set({ isLoading: true });
-        try {
-            const res = await getAllAudiosApi(q, cursor);
-            const data = res.data; // AudioPage
-            set({
-                allAudiosData: data.results,
-                hasMore: data.hasMore,
-                nextCursor: data.nextCursor,
-            });
-            return data.nextCursor;
-        } catch (err) {
-            console.error(err);
-            return null;
-        } finally {
-            set({ isLoading: false });
-        }
-    },
+export const useAllAudioStore = create<AudioStore>((set) => {
+    const store = {
+        ...initialState,
 
-    reset: () => set({ allAudiosData: [], hasMore: false, nextCursor: null }),
-}));
+        fetchAllAudios: async (q: string | null, cursor: string | null) => {
+            set({ isLoading: true });
+            try {
+                const res = await getAllAudiosApi(q, cursor);
+                const data = res.data;
+                set({
+                    allAudiosData: data.results,
+                    hasMore: data.hasMore,
+                    nextCursor: data.nextCursor,
+                });
+                return data.nextCursor;
+            } catch (err) {
+                console.error(err);
+                return null;
+            } finally {
+                set({ isLoading: false });
+            }
+        },
+
+        reset: () => set(initialState),
+    };
+
+    registerReset(store.reset);
+
+    return store;
+});

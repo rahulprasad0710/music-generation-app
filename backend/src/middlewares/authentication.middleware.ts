@@ -54,6 +54,7 @@ export const decodeToken = async (
         throw new AppError("Authentication failed", ErrorType.AUTH_ERROR);
     }
 };
+
 const verifyToken = async (
     req: Request,
     res: Response,
@@ -67,7 +68,7 @@ const verifyToken = async (
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
             res.status(401).json({
                 success: false,
-                message: "Unauthorized",
+                message: "Access Denied",
                 data: null,
             });
             return;
@@ -78,7 +79,7 @@ const verifyToken = async (
         if (!token) {
             res.status(401).json({
                 success: false,
-                error: "Access Denied",
+                message: "Access Denied",
                 data: null,
             });
             return;
@@ -94,8 +95,17 @@ const verifyToken = async (
         if (!user || user?.id == undefined) {
             res.status(401).json({
                 success: false,
-                error: "Invalid Token",
-                data: 1,
+                message: "Invalid Token",
+                data: null,
+            });
+            return;
+        }
+
+        if (user.isBlacklisted) {
+            res.status(403).json({
+                success: false,
+                error: "Access Denied",
+                data: null,
             });
             return;
         }
@@ -119,7 +129,7 @@ export const verifyRefreshToken = async (
         if (!token) {
             res.status(401).json({
                 success: false,
-                error: "Authentication failed.",
+                message: "Authentication failed.",
                 data: null,
             });
             return;
@@ -132,7 +142,7 @@ export const verifyRefreshToken = async (
         } catch (error) {
             res.status(401).json({
                 success: false,
-                error: "Invalid or expired token.",
+                message: "Invalid or expired token.",
                 data: null,
             });
             return;
@@ -146,22 +156,27 @@ export const verifyRefreshToken = async (
         if (!user) {
             res.status(401).json({
                 success: false,
-                error: "Invalid Credentials",
+                message: "Invalid Credentials",
                 data: null,
             });
             return;
         }
 
-        if (
-            !user.refreshToken ||
-            user.refreshToken !== token ||
-            user?.id == undefined
-        ) {
+        if (!user.refreshToken || user.refreshToken !== token || !user?.id) {
             // await authService.logout(userId);
             res.status(401).json({
                 success: false,
-                error: "Invalid Token",
-                data: 2,
+                message: "Invalid Token",
+                data: null,
+            });
+            return;
+        }
+
+        if (user.isBlacklisted) {
+            res.status(401).json({
+                success: false,
+                message: "Access Denied",
+                data: null,
             });
             return;
         }

@@ -33,6 +33,10 @@ const loginWithCredentials = async (payload: LoginPayloadInput) => {
         );
     }
 
+    if (userFromDB?.isBlacklisted) {
+        throw new AppError("Forbidden", ErrorType.FORBIDDEN);
+    }
+
     if (!userFromDB.isActive) {
         throw new AppError("User Deactivated.", ErrorType.AUTH_ERROR);
     }

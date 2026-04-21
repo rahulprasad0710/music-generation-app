@@ -10,7 +10,7 @@ interface AvatarProps {
 }
 
 export function GradientAvatar({
-    initial = "J",
+    initial,
     notificationCount = 2,
     size = 48,
     animate = true,

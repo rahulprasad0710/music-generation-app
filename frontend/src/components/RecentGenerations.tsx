@@ -104,7 +104,7 @@ export function GenerationItem({
     const togglePlay = () => {
         if (isPlaying) {
             audioRef.current?.pause();
-            setCurrentlyPlaying(null);
+            setCurrentlyPlaying(generation.id);
         } else {
             setCurrentlyPlaying(generation.id);
             audioRef.current?.play().catch(() => {});
