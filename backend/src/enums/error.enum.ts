@@ -10,6 +10,7 @@ export enum ErrorType {
     EXPIRED_TOKEN_ERROR = "EXPIRED_TOKEN_ERROR",
     UNAUTHORIZED_ERROR = "UNAUTHORIZED_ERROR",
     AWS_ERROR = "AWS_ERROR",
+    FORBIDDEN = "FORBIDDEN",
 }
 
 export const ErrorTypeCode: Record<ErrorType, number> = {
@@ -22,6 +23,7 @@ export const ErrorTypeCode: Record<ErrorType, number> = {
     [ErrorType.CONFLICT_ERROR]: 409,
     [ErrorType.INVALID_TOKEN_ERROR]: 401,
     [ErrorType.EXPIRED_TOKEN_ERROR]: 401,
-    [ErrorType.UNAUTHORIZED_ERROR]: 403,
+    [ErrorType.UNAUTHORIZED_ERROR]: 401,
+    [ErrorType.FORBIDDEN]: 403,
     [ErrorType.AWS_ERROR]: 502,
 };

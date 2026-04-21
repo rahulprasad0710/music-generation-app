@@ -1,14 +1,11 @@
 "use client";
 import { useRef, useState } from "react";
-import RegisterForm from "./Modal/Register";
 import AnimatedModal from "./Modal/ModalMain";
-import LoginForm from "./Modal/LoginScreen";
 import { useAuthStore } from "@/store/auth.store";
 import ProfilePopupScreen from "./ProfilePopUpScreen";
 import { useToggleStore } from "@/store/profile.store";
 import MusicLogo from "./molecules/MusicGptLogo";
 import { GradientAvatar } from "./molecules/ProfileIcon";
-import { div } from "framer-motion/client";
 import AuthScreen from "./Auth/AuthScreen";
 
 const Header = () => {
@@ -16,6 +13,10 @@ const Header = () => {
     const { isOpen, setOpen, isSignUpOpen, setSignUpOpen } = useToggleStore();
     const buttonRef = useRef<HTMLButtonElement>(null);
     const { isMenubarOpen } = useToggleStore();
+
+    console.log({
+        isAuthenticating,
+    });
 
     return (
         <header className=' fixed left-0 top-0 z-40 h-20 w-[calc(100vw-20px)] pointer-events-auto bg-transparent'>
@@ -30,8 +31,12 @@ const Header = () => {
                 <div className='pointer-events-auto flex h-20 items-center justify-end gap-x-base'>
                     {isAuthenticating && (
                         <div className='relative h-10 w-10'>
-                            <span className='absolute inset-0 rounded-full bg-gray-800 dark:bg-neutral-800 animate-pulse' />
-                            <span className='absolute inset-1 rounded-full bg-gray-900 dark:bg-neutral-700 animate-pulse' />
+                            <span className='absolute inset-0 rounded-full bg-gray-800 dark:bg-neutral-800 animate-pulse w-full h-full' />
+                            <GradientAvatar
+                                initial={undefined}
+                                showNotification={false}
+                            />
+                            <span className='absolute inset-1 rounded-full bg-gray-900 dark:bg-neutral-700 animate-pulse w-full h-full' />
                         </div>
                     )}
                     {!isAuthenticating && !user?.authenticated && (
