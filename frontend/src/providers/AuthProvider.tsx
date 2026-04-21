@@ -28,11 +28,6 @@ export default function AuthProvider({
             } catch (error) {
                 setUser(null);
                 setToken(null);
-                toast.error(
-                    error instanceof Error
-                        ? error.message
-                        : "Something went wrong.",
-                );
             } finally {
                 setAuthenticating(false);
             }

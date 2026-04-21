@@ -51,7 +51,6 @@ function LoginForm({ onSwitch, onClose }: LoginFormProps) {
             if (success) {
                 markAsReturningUser();
                 onClose();
-                toast.success("Logged in!");
             }
         } catch (error) {
             toast.error(
