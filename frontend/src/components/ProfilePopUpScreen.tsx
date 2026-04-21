@@ -7,16 +7,7 @@ import RecentGenerations from "./RecentGenerations";
 import { logoutApi } from "@/services/auth.api";
 import { useAuthStore } from "@/store/auth.store";
 import { GradientAvatar } from "./molecules/ProfileIcon";
-
-interface Audio {
-    id: number;
-    title: string;
-    inputPrompt: string;
-    status: "PENDING" | "QUEUED" | "PROCESSING" | "COMPLETED" | "FAILED";
-    progress?: number;
-    durationMs?: number | null;
-    thumbnail?: string | null;
-}
+import AudioGeneration from "./AudioGeneration";
 
 interface User {
     name: string;
@@ -205,20 +196,6 @@ export default function ProfilePopupScreen({
                             </div>
                             {/* Progress bar */}
                             <div className='flex items-center gap-3'>
-                                <div className='w-24 h-1.5 rounded-full bg-white/10 overflow-hidden'>
-                                    <motion.div
-                                        className='h-full rounded-full bg-violet-500'
-                                        initial={{ width: 0 }}
-                                        animate={{
-                                            width: `${(user.credits / user.maxCredits) * 100}%`,
-                                        }}
-                                        transition={{
-                                            duration: 0.6,
-                                            delay: 0.1,
-                                            ease: "easeOut",
-                                        }}
-                                    />
-                                </div>
                                 <button
                                     className='
                                     flex items-center gap-1 rounded-full
@@ -240,11 +217,9 @@ export default function ProfilePopupScreen({
                                 </button>
                             </div>
                         </div>
-                        {/* ── Divider ───────────────────────────────────── */}
                         <div className='border-t border-white/5 mb-3' />
-                        {/* ── Recent generations ───────────────────────── */}
+                        <AudioGeneration />
                         <RecentGenerations showMainTitle={false} />
-                        {/* ── Divider + Sign out ───────────────────────── */}
                         <div className='border-t border-white/5 mt-3 pt-3'>
                             <button
                                 onClick={handleLogout}

@@ -95,7 +95,12 @@ export class AudioService {
 
     async getAudioByUser(userId: number, page = 1, limit = 5) {
         const result = await prisma.audio.findMany({
-            where: { userId },
+            where: {
+                userId,
+                prompt: {
+                    status: "COMPLETED",
+                },
+            },
             include: {
                 prompt: true,
             },

@@ -57,14 +57,6 @@ export function PlayIcon() {
     );
 }
 
-function PauseIcon({ className }: { className?: string }) {
-    return (
-        <svg viewBox='0 0 24 24' fill='currentColor' className={className}>
-            <path d='M6 19h4V5H6v14Zm8-14v14h4V5h-4Z' />
-        </svg>
-    );
-}
-
 function DownloadIcon({ className }: { className?: string }) {
     return (
         <svg
@@ -231,7 +223,6 @@ type IRecentGenerationsProps = {
 };
 
 export default function RecentGenerations(props: IRecentGenerationsProps) {
-    const { showMainTitle } = props;
     const { generations, isLoading, error, fetchGenerations } = useAudioStore();
     const prompts = useMusicStore((s) => s.prompts);
     const { accessToken } = useAuthStore();
@@ -243,53 +234,28 @@ export default function RecentGenerations(props: IRecentGenerationsProps) {
     }, [accessToken, fetchGenerations]);
 
     return (
-        <div className='w-full max-w-200 mx-auto mb-32'>
-            {showMainTitle && (
-                <h2 className='text-base font-semibold text-white tracking-wide mb-4'>
-                    Recent generations
-                </h2>
+        <div className='flex flex-col gap-0.5'>
+            {isLoading &&
+                Array.from({ length: 4 }).map((_, i) => (
+                    <SkeletonItem key={i} />
+                ))}
+
+            {error && (
+                <div className='rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400'>
+                    Failed to load generations: {error}
+                </div>
             )}
 
-            <div className='flex flex-col gap-0.5'>
-                {isLoading &&
-                    Array.from({ length: 4 }).map((_, i) => (
-                        <SkeletonItem key={i} />
-                    ))}
+            {!isLoading && !error && generations.length === 0 && (
+                <p className='text-sm text-white/30 px-3 py-4'>
+                    Create your first song!
+                </p>
+            )}
 
-                {error && (
-                    <div className='rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400'>
-                        Failed to load generations: {error}
-                    </div>
-                )}
-
-                {!isLoading && !error && generations.length === 0 && (
-                    <p className='text-sm text-white/30 px-3 py-4'>
-                        Create your first song!
-                    </p>
-                )}
-
-                <div>
-                    {prompts.map((p) => (
-                        <div key={`${p.id}-v1`}>
-                            <GenerationCard2
-                                version={1}
-                                key={`${p.id}-v1`}
-                                record={p}
-                            />
-                            <GenerationCard2
-                                version={2}
-                                key={`${p.id}-v2`}
-                                record={p}
-                            />
-                        </div>
-                    ))}
-                </div>
-
-                {!isLoading &&
-                    generations.map((gen) => (
-                        <GenerationItem key={gen.id} generation={gen} />
-                    ))}
-            </div>
+            {!isLoading &&
+                generations.map((gen) => (
+                    <GenerationItem key={gen.id} generation={gen} />
+                ))}
         </div>
     );
 }
