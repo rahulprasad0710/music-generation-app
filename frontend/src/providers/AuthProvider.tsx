@@ -5,6 +5,8 @@ import { useAuthStore } from "@/store/auth.store";
 import { getMeApi } from "@/services/auth.api";
 import Header from "@/components/Header";
 import DesktopNavigation from "@/components/Sidebar";
+import { Toaster } from "sonner";
+import { toast } from "sonner";
 
 export default function AuthProvider({
     children,
@@ -13,7 +15,6 @@ export default function AuthProvider({
 }) {
     const setUser = useAuthStore((s) => s.setUser);
     const setToken = useAuthStore((s) => s.setToken);
-    const accessToken = useAuthStore((s) => s.accessToken);
     const isAuthenticating = useAuthStore((s) => s.isAuthenticating);
     const setAuthenticating = useAuthStore((s) => s.setAuthenticating);
 
@@ -24,9 +25,14 @@ export default function AuthProvider({
 
                 setUser(response.data);
                 setToken(response.data?.accessToken ?? null);
-            } catch (err) {
+            } catch (error) {
                 setUser(null);
                 setToken(null);
+                toast.error(
+                    error instanceof Error
+                        ? error.message
+                        : "Something went wrong.",
+                );
             } finally {
                 setAuthenticating(false);
             }
@@ -47,6 +53,7 @@ export default function AuthProvider({
             <Header />
             <DesktopNavigation />
             {children}
+            <Toaster theme='dark' richColors position='top-right' />
         </main>
     );
 }

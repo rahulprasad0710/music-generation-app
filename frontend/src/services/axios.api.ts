@@ -1,4 +1,5 @@
 import { useAuthStore } from "@/store/auth.store";
+import { ApiResponse } from "@/types/Api.type";
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 const baseURL = `http://localhost:8000/api`;
 
@@ -93,5 +94,41 @@ api.interceptors.response.use(
         }
 
         return Promise.reject(error);
+    },
+);
+
+// authApi.ts
+authApi.interceptors.response.use(
+    (response) => {
+        // Throw on business logic failures (Scenario A)
+        if (response.data && response.data.success === false) {
+            return Promise.reject(
+                new Error(response.data.message ?? "Something went wrong."),
+            );
+        }
+        return response;
+    },
+    (error: AxiosError<ApiResponse<unknown>>) => {
+        // Throw with backend message on HTTP errors (Scenario B)
+        const message = error.response?.data?.message ?? error.message;
+        return Promise.reject(new Error(message));
+    },
+);
+
+// authApi.ts
+api.interceptors.response.use(
+    (response) => {
+        // Throw on business logic failures (Scenario A)
+        if (response.data && response.data.success === false) {
+            return Promise.reject(
+                new Error(response.data.message ?? "Something went wrong."),
+            );
+        }
+        return response;
+    },
+    (error: AxiosError<ApiResponse<unknown>>) => {
+        // Throw with backend message on HTTP errors (Scenario B)
+        const message = error.response?.data?.message ?? error.message;
+        return Promise.reject(new Error(message));
     },
 );

@@ -40,6 +40,7 @@ export const loginApi = async (
         "/auth/login",
         payload,
     );
+
     return res.data;
 };
 
@@ -50,20 +51,24 @@ export const registerApi = async (
         "/auth/register",
         payload,
     );
+
     return res.data;
 };
 
 export const getMeApi = async () => {
     const res = await authApi.get<ApiResponse<AuthUser>>("/auth/me");
+
     return res.data;
 };
 
 export const refreshMeApi = async () => {
     const res = await authApi.post<ApiResponse<AuthUser>>("/auth/refresh-me");
+
     return res.data;
 };
 
 export const logoutApi = async () => {
     const res = await api.get<ApiResponse<LogoutResponse>>("/auth/logout");
+
     return res.data;
 };

@@ -20,6 +20,8 @@ import { registerApi } from "@/services/auth.api";
 import Image from "next/image";
 import MusicLogo from "../molecules/MusicGptLogo";
 import musicLogo from "@/assets/musicgpt32.webp";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 interface RegisterFormProps {
     onSwitch: () => void;
@@ -90,10 +92,12 @@ function RegisterForm({ onSwitch }: RegisterFormProps) {
             if (success) {
                 setDone(true);
             }
-
-            console.log({ data, success, message });
         } catch (error) {
-            console.log(error);
+            toast.error(
+                error instanceof Error
+                    ? error.message
+                    : "Something went wrong.",
+            );
         }
     };
 

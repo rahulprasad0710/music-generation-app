@@ -11,6 +11,7 @@ import { useAuthStore } from "@/store/auth.store";
 import { useFirstLoginStore } from "@/store/userFirstLogin.store";
 import Image from "next/image";
 import musicLogo from "@/assets/musicgpt32.webp";
+import { toast } from "sonner";
 
 interface LoginFormProps {
     onSwitch: () => void;
@@ -42,19 +43,22 @@ function LoginForm({ onSwitch, onClose }: LoginFormProps) {
                 isRememberMe: payload?.rememberMe ?? false,
             });
 
-            const { data, success, message } = response;
+            const { data, success } = response;
 
             useAuthStore.getState().setUser(data);
             useAuthStore.getState().setToken(data?.accessToken ?? null);
 
-            console.log(response);
-
             if (success) {
                 markAsReturningUser();
                 onClose();
+                toast.success("Logged in!");
             }
         } catch (error) {
-            console.log(error);
+            toast.error(
+                error instanceof Error
+                    ? error.message
+                    : "Something went wrong.",
+            );
         }
     };
 
