@@ -36,7 +36,6 @@ export const decodeToken = async (
 
         return { userId: Number(decoded.id) };
     } catch (error: unknown) {
-        console.log("LOG: ~ decodeToken ~ error:", error);
         if (typeof error === "object" && error !== null && "name" in error) {
             const name = (error as { name: string }).name;
 
@@ -152,11 +151,6 @@ export const verifyRefreshToken = async (
             });
             return;
         }
-
-        console.log({
-            user,
-            token,
-        });
 
         if (
             !user.refreshToken ||

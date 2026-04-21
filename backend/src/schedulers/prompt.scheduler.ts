@@ -9,11 +9,10 @@ export function startPromptScheduler() {
     // Every 60 seconds
     cron.schedule("* * * * *", async () => {
         try {
-            // Find prompts stuck in PENDING (not yet picked up, within maxAttempts)
             const pendingPrompts = await prisma.prompt.findMany({
                 where: {
                     status: "PENDING",
-                    attempts: { lt: prisma.prompt.fields.maxAttempts }, // attempts < maxAttempts
+                    attempts: { lt: prisma.prompt.fields.maxAttempts },
                     jobId: null, // not yet queued
                 },
                 take: 50,

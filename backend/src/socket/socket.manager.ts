@@ -9,7 +9,6 @@ export interface AuthSocket extends Socket {
 export class SocketManager {
     private static io: IOServer | null = null;
 
-    /** Call once at server startup */
     public static init(httpServer: HTTPServer): IOServer {
         if (this.io) return this.io;
 
@@ -21,7 +20,6 @@ export class SocketManager {
             transports: ["websocket", "polling"],
         });
 
-        // ── Auth middleware ───────────────────────────────────────────────────
         this.io.use(async (socket: AuthSocket, next) => {
             const token =
                 socket.handshake.auth?.token ||
@@ -30,7 +28,6 @@ export class SocketManager {
             if (!token) return next(new Error("Authentication token missing"));
 
             try {
-                // const payload = verifyAccessToken(token) as { userId: number };
                 const payload = (await decodeToken(token)) as {
                     userId: number;
                 };
@@ -42,7 +39,6 @@ export class SocketManager {
             }
         });
 
-        // ── Connection handler ────────────────────────────────────────────────
         this.io.on("connection", (socket: AuthSocket) => {
             const userId = socket.userId!;
             const room = `user:${userId}`;
@@ -54,7 +50,6 @@ export class SocketManager {
                 console.log(`[Socket] User ${userId} disconnected: ${reason}`);
             });
 
-            // Client can subscribe to a specific prompt for granular updates
             socket.on("subscribe:prompt", (promptId: number) => {
                 socket.join(`prompt:${promptId}`);
             });
@@ -63,7 +58,6 @@ export class SocketManager {
         return this.io;
     }
 
-    /** Emit an event to every socket belonging to a user */
     public static emitToUser<T>(userId: number, event: string, data: T): void {
         if (!this.io) {
             console.warn("[Socket] io not initialized — cannot emit");
@@ -72,7 +66,6 @@ export class SocketManager {
         this.io.to(`user:${userId}`).emit(event, data);
     }
 
-    /** Emit to a specific prompt room (all watchers) */
     public static emitToPrompt<T>(
         promptId: number,
         event: string,

@@ -15,11 +15,8 @@ function getGenerationDuration(isPremium: boolean): number {
 function shouldFail(elapsedMs: number, totalMs: number): boolean {
     const progress = elapsedMs / totalMs;
 
-    // Can only fail after 25% progress
     if (progress < 0.25) return false;
 
-    // 15% base chance to fail, checked every tick
-    // Higher chance around 30-50% progress (mid-generation failure)
     const midGenerationZone = progress >= 0.3 && progress <= 0.5;
     const failChance = midGenerationZone ? 0.06 : 0.02;
 
@@ -143,7 +140,6 @@ export async function startAudioWorker() {
                 },
             });
 
-            // ── 2. Log JobEvent ──────────────────────────────────────────────
             await prisma.jobEvent.create({
                 data: {
                     promptId,
@@ -157,7 +153,6 @@ export async function startAudioWorker() {
                 },
             });
 
-            // ── 3. Emit processing start to user ─────────────────────────────
             SocketManager.emitToUser(userId, "job:processing", {
                 promptId,
                 estimatedSeconds: Math.round(totalMs / 1000),
@@ -167,7 +162,6 @@ export async function startAudioWorker() {
                     : "Generation queued — estimated ~1.2-1.5 min",
             });
 
-            // ── 4. Stream progress with random failure chance ─────────────────
             const { failed, reason } = await simulateLLMStream(
                 job,
                 userId,
@@ -175,12 +169,10 @@ export async function startAudioWorker() {
                 isPremium,
             );
 
-            // ── 5. Handle random mid-generation failure ───────────────────────
             if (failed) {
                 throw new Error(reason ?? "Generation failed unexpectedly");
             }
 
-            // ── 6. Create Audio records ───────────────────────────────────────
             const fakeAudios = generateFakeAudios(prompt);
 
             const audios = await Promise.all(
@@ -198,7 +190,6 @@ export async function startAudioWorker() {
                 ),
             );
 
-            // ── 7. Mark COMPLETED ─────────────────────────────────────────────
             const completedPrompt = await prisma.prompt.update({
                 where: { id: promptId },
                 data: {
@@ -210,7 +201,6 @@ export async function startAudioWorker() {
                 include: { audios: true },
             });
 
-            // ── 8. Log JobEvent ───────────────────────────────────────────────
             await prisma.jobEvent.create({
                 data: {
                     promptId,
@@ -219,7 +209,6 @@ export async function startAudioWorker() {
                 },
             });
 
-            // ── 9. Emit completion ────────────────────────────────────────────
             SocketManager.emitToUser(userId, "job:completed", {
                 promptId,
                 audios: completedPrompt.audios,
@@ -233,7 +222,6 @@ export async function startAudioWorker() {
         },
     );
 
-    // ── failed handler stays exactly the same ─────────────────────────────
     worker.on("failed", async (job, err) => {
         if (!job) return;
         const { promptId, userId } = job.data;

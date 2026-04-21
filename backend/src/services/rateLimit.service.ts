@@ -12,21 +12,10 @@ export interface RateLimitResult {
 }
 
 export class RateLimitService {
-    /**
-     * Build a Redis key scoped to a user and their current time window.
-     * Key format: rate_limit:<tier>:<userId>
-     */
     private static buildKey(userId: number, tier: RateLimitTier): string {
         return `${RATE_LIMIT_CONSTANT.REDIS_KEY_PREFIX}:${tier}:${userId}`;
     }
 
-    /**
-     * Check and increment the rate limit counter for a user.
-     * Uses Redis INCR + EXPIRE (set TTL only on first request in window).
-     *
-     * This is atomic-safe: INCR is a single Redis op, and we set TTL
-     * only when the key is new (count === 1).
-     */
     public static async checkLimit(
         userId: number,
         isPremium: boolean,
@@ -37,15 +26,12 @@ export class RateLimitService {
 
         const redis = await RedisConfig.getInstance();
 
-        // Atomically increment counter
         const currentCount = await redis.incr(key);
 
         if (currentCount === 1) {
-            // First request in window — set the TTL
             await redis.expire(key, config.WINDOW_SECONDS);
         }
 
-        // Get the remaining TTL for this window
         const ttl = await redis.ttl(key);
         const resetInSeconds = ttl > 0 ? ttl : config.WINDOW_SECONDS;
 
@@ -61,9 +47,6 @@ export class RateLimitService {
         };
     }
 
-    /**
-     * Manually reset the rate limit for a user (e.g., for testing or admin actions).
-     */
     public static async resetLimit(
         userId: number,
         isPremium: boolean,

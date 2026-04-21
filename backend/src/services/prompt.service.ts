@@ -18,12 +18,10 @@ export class PromptService {
         const priority = isPremium ? 1 : 10;
         const title = PromptService.generateTitle(prompt);
 
-        // 1. Persist PENDING
         const createdPrompt = await prisma.prompt.create({
             data: { userId, prompt, title, status: "PENDING", priority },
         });
 
-        // 2. Immediately enqueue (scheduler is only a failsafe)
         try {
             const queue = await getAudioQueue();
 
@@ -41,7 +39,6 @@ export class PromptService {
                 },
             );
 
-            // 3. Mark QUEUED synchronously so the scheduler skips it
             await prisma.prompt.update({
                 where: { id: createdPrompt.id },
                 data: { status: "QUEUED", jobId: job.id },
@@ -49,7 +46,6 @@ export class PromptService {
 
             return { ...createdPrompt, status: "QUEUED" as const };
         } catch (err) {
-            // Queue unavailable — scheduler will rescue. Still return PENDING.
             console.error(
                 "[PromptService] Failed to enqueue, scheduler will retry:",
                 err,
@@ -133,14 +129,3 @@ export class PromptService {
         return result;
     }
 }
-
-// const hasNextPage = result.length > limit;
-// return {
-//     data: result.slice(0, limit),
-//     nextCursor: hasNextPage
-//         ? {
-//               id: lastItem.id,
-//               rank: lastItem.rank,
-//           }
-//         : null,
-// };
