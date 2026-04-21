@@ -15,21 +15,21 @@ cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env
 
 # spin up everything
-docker-compose up --build
+docker compose up --build
 ```
+
 # Walkthough
+
 https://github.com/user-attachments/assets/149fe023-6142-40e8-a79e-fe386c0074bf
 
 # Screenshot
+
 <img width="1912" height="958" alt="screenshot6" src="https://github.com/user-attachments/assets/3e25a155-6ff4-4076-8ddc-c3c7b4d0f8ca" />
 <img width="1912" height="958" alt="screenshot5" src="https://github.com/user-attachments/assets/b40b1285-9d7d-421a-bacc-24cc860bf9c4" />
 <img width="1912" height="958" alt="screenshot4" src="https://github.com/user-attachments/assets/9d48cbc4-7ae5-4abf-8846-6a75908be586" />
 <img width="1912" height="958" alt="screenshot3" src="https://github.com/user-attachments/assets/ceb7ee0b-8374-4035-b9d5-4055a0b88328" />
 <img width="1912" height="958" alt="screenshot2" src="https://github.com/user-attachments/assets/b8183b76-4d46-438d-b753-94d3515bc0e7" />
 <img width="953" height="958" alt="screenshot1" src="https://github.com/user-attachments/assets/2cb2d56e-86e1-4a09-9954-4e0364537a12" />
-
-
-
 
 | Service  | URL                                |
 | -------- | ---------------------------------- |
