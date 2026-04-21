@@ -2,22 +2,15 @@
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-    Eye,
-    EyeOff,
-    Mail,
-    Lock,
-    XCircle,
-    ArrowRight,
-    CheckCircle2,
-} from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react";
 import { LoginFormValues, loginSchema } from "@/validations/auth.schema";
 import InputWrapper from "../molecules/InputWrapper";
 import { loginApi } from "@/services/auth.api";
 import { useAuthStore } from "@/store/auth.store";
 import { useFirstLoginStore } from "@/store/userFirstLogin.store";
+import Image from "next/image";
+import musicLogo from "@/assets/musicgpt32.webp";
 
 interface LoginFormProps {
     onSwitch: () => void;
@@ -42,10 +35,6 @@ function LoginForm({ onSwitch, onClose }: LoginFormProps) {
     });
 
     const handleSubmitForm = async (payload: LoginFormValues) => {
-        console.log({
-            payload,
-        });
-
         try {
             const response = await loginApi({
                 email: payload.email,
@@ -70,7 +59,20 @@ function LoginForm({ onSwitch, onClose }: LoginFormProps) {
     };
 
     return (
-        <div className='p-10 bg-brand-black-100 rounded-[28px]'>
+        <div className='p-8 bg-brand-black-100 rounded-[28px] w-full'>
+            <div className='mb-6 flex items-center justify-center w-full gap-4 '>
+                <div className='relative h-8 w-8'>
+                    <Image
+                        src={musicLogo}
+                        alt='MusicGPT logo'
+                        width={32}
+                        height={32}
+                        priority
+                    />
+                </div>
+                <h2 className='text-center font-bold text-xl'>Login</h2>
+            </div>
+
             <form
                 onSubmit={handleSubmit(handleSubmitForm)}
                 noValidate
@@ -108,7 +110,7 @@ function LoginForm({ onSwitch, onClose }: LoginFormProps) {
                         autoComplete='current-password'
                         className={`w-full h-12 pl-9 pr-4 rounded-xl border text-sm bg-brand-black-100 text-neutral-100 placeholder:text-neutral-500 outline-none transition 
                                 focus:bg-neutral-800 focus:ring-0.5 focus:ring-neutral-400
-                                ${errors.email && dirtyFields.email ? "border-red-500" : "border-neutral-700 focus:border-neutral-500"}`}
+                                ${errors.password && dirtyFields.password ? "border-red-500" : "border-neutral-700 focus:border-neutral-500"}`}
                     />
                     <button
                         type='button'
@@ -175,7 +177,7 @@ function LoginForm({ onSwitch, onClose }: LoginFormProps) {
                     <button
                         type='button'
                         onClick={onSwitch}
-                        className='font-semibold text-neutral-600 hover:text-neutral-800 transition-colors cursor-pointer'
+                        className='font-semibold text-neutral-200 hover:text-neutral-50 transition-colors cursor-pointer px-2'
                     >
                         Create one
                     </button>

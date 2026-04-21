@@ -16,6 +16,10 @@ import {
 } from "lucide-react";
 import { RegisterFormValues, registerSchema } from "@/validations/auth.schema";
 import InputWrapper from "../molecules/InputWrapper";
+import { registerApi } from "@/services/auth.api";
+import Image from "next/image";
+import MusicLogo from "../molecules/MusicGptLogo";
+import musicLogo from "@/assets/musicgpt32.webp";
 
 interface RegisterFormProps {
     onSwitch: () => void;
@@ -54,17 +58,18 @@ function RegisterForm({ onSwitch }: RegisterFormProps) {
         return (
             <div className='flex flex-col items-center gap-4 py-10 '>
                 <div className='w-14 h-14 rounded-full bg-violet-100 flex items-center justify-center'>
-                    <CheckCircle2 size={28} className='text-violet-600' />
+                    <CheckCircle2 size={28} className='text-green-600' />
                 </div>
+
                 <h3 className='text-xl font-bold text-gray-900'>
                     Account created!
                 </h3>
-                <p className='text-sm text-gray-500 text-center'>
+                <p className='text-sm text-neutral-50 text-center'>
                     Welcome aboard. You can now sign in.
                 </p>
                 <button
                     onClick={onSwitch}
-                    className='mt-2 text-sm font-semibold text-violet-600 hover:text-violet-800 transition-colors flex items-center gap-1'
+                    className='mt-2 cursor-pointer text-sm font-semibold text-violet-600 hover:text-violet-800 transition-colors flex items-center gap-1'
                 >
                     Go to login <ArrowRight size={14} />
                 </button>
@@ -72,10 +77,42 @@ function RegisterForm({ onSwitch }: RegisterFormProps) {
         );
     }
 
+    const handleSubmitForm = async (payload: RegisterFormValues) => {
+        try {
+            const response = await registerApi({
+                email: payload.email,
+                password: payload.password,
+                name: payload?.fullName,
+            });
+
+            const { data, success, message } = response;
+
+            if (success) {
+                setDone(true);
+            }
+
+            console.log({ data, success, message });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     return (
-        <div className='p-10'>
+        <div className='p-8'>
+            <div className='mb-6 flex items-center justify-center w-full gap-4 '>
+                <div className='relative h-8 w-8'>
+                    <Image
+                        src={musicLogo}
+                        alt='MusicGPT logo'
+                        width={32}
+                        height={32}
+                        priority
+                    />
+                </div>
+                <h2 className='text-center font-bold text-xl'>Sign Up</h2>
+            </div>
             <form
-                onSubmit={handleSubmit(() => setDone(true))}
+                onSubmit={handleSubmit(handleSubmitForm)}
                 noValidate
                 className='flex flex-col gap-4'
             >
@@ -91,9 +128,9 @@ function RegisterForm({ onSwitch }: RegisterFormProps) {
                         type='text'
                         placeholder='Jane Doe'
                         autoComplete='name'
-                        className={`w-full h-11 pl-9 pr-4 rounded-xl border text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none transition
-                                focus:bg-white focus:ring-2 focus:ring-violet-300
-                                ${errors.fullName && dirtyFields.fullName ? "border-red-400" : "border-gray-200 focus:border-violet-400"}`}
+                        className={`w-full h-12 pl-9 pr-4 rounded-xl border text-sm bg-brand-black-100 text-neutral-100 placeholder:text-neutral-500 outline-none transition 
+                                focus:bg-neutral-800 focus:ring-0.5 focus:ring-neutral-400
+                                ${errors.fullName && dirtyFields.fullName ? "border-red-500" : "border-neutral-700 focus:border-neutral-500"}`}
                     />
                 </InputWrapper>
 
@@ -109,9 +146,9 @@ function RegisterForm({ onSwitch }: RegisterFormProps) {
                         type='email'
                         placeholder='jane@example.com'
                         autoComplete='email'
-                        className={`w-full h-11 pl-9 pr-4 rounded-xl border text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none transition
-            focus:bg-white focus:ring-2 focus:ring-violet-300
-            ${errors.email && dirtyFields.email ? "border-red-400" : "border-gray-200 focus:border-violet-400"}`}
+                        className={`w-full h-12 pl-9 pr-4 rounded-xl border text-sm bg-brand-black-100 text-neutral-100 placeholder:text-neutral-500 outline-none transition 
+                                focus:bg-neutral-800 focus:ring-0.5 focus:ring-neutral-400
+                                ${errors.email && dirtyFields.email ? "border-red-500" : "border-neutral-700 focus:border-neutral-500"}`}
                     />
                 </InputWrapper>
 
@@ -127,9 +164,9 @@ function RegisterForm({ onSwitch }: RegisterFormProps) {
                         type={showPw ? "text" : "password"}
                         placeholder='Create a password'
                         autoComplete='new-password'
-                        className={`w-full h-11 pl-9 pr-10 rounded-xl border text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none transition
-            focus:bg-white focus:ring-2 focus:ring-violet-300
-            ${errors.password && dirtyFields.password ? "border-red-400" : "border-gray-200 focus:border-violet-400"}`}
+                        className={`w-full h-12 pl-9 pr-4 rounded-xl border text-sm bg-brand-black-100 text-neutral-100 placeholder:text-neutral-500 outline-none transition 
+                                focus:bg-neutral-800 focus:ring-0.5 focus:ring-neutral-400
+                                ${errors.password && dirtyFields.password ? "border-red-500" : "border-neutral-700 focus:border-neutral-500"}`}
                     />
                     <button
                         type='button'
@@ -175,9 +212,9 @@ function RegisterForm({ onSwitch }: RegisterFormProps) {
                         type={showCpw ? "text" : "password"}
                         placeholder='Repeat your password'
                         autoComplete='new-password'
-                        className={`w-full h-11 pl-9 pr-10 rounded-xl border text-sm bg-gray-50 text-gray-900 placeholder:text-gray-400 outline-none transition
-            focus:bg-white focus:ring-2 focus:ring-violet-300
-            ${errors.confirmPassword && dirtyFields.confirmPassword ? "border-red-400" : "border-gray-200 focus:border-violet-400"}`}
+                        className={`w-full h-12 pl-9 pr-4 rounded-xl border text-sm bg-brand-black-100 text-neutral-100 placeholder:text-neutral-500 outline-none transition 
+                                focus:bg-neutral-800 focus:ring-0.5 focus:ring-neutral-400
+                                ${errors.confirmPassword && dirtyFields.confirmPassword ? "border-red-500" : "border-neutral-700 focus:border-neutral-500"}`}
                     />
                     <button
                         type='button'
@@ -193,12 +230,12 @@ function RegisterForm({ onSwitch }: RegisterFormProps) {
                 <button
                     type='submit'
                     disabled={!isValid}
-                    className={`mt-2 h-11 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2
-          ${
-              isValid
-                  ? "bg-violet-600 hover:bg-violet-700 active:scale-[0.98] text-white shadow-md shadow-violet-200 cursor-pointer"
-                  : "bg-gray-100 text-gray-400 cursor-not-allowed"
-          }`}
+                    className={`mt-2 h-12  text-sm font-bold transition-all flex items-center justify-center gap-2 rounded-full p-4  border border-white/20 
+                    ${
+                        isValid
+                            ? "bg-neutral-50 hover:bg-neutral-50 active:scale-[0.98] text-neutral-800 shadow-md shadow-neutral-900 cursor-pointer "
+                            : " text-sm font-semibold leading-tight text-white  transition-all active:scale-95"
+                    }`}
                 >
                     Create Account {isValid && <ArrowRight size={15} />}
                 </button>
@@ -208,9 +245,9 @@ function RegisterForm({ onSwitch }: RegisterFormProps) {
                     <button
                         type='button'
                         onClick={onSwitch}
-                        className='font-semibold text-violet-600 hover:text-violet-800 transition-colors'
+                        className='font-semibold text-neutral-200 hover:text-neutral-50 transition-colors cursor-pointer px-2'
                     >
-                        Sign in
+                        Sign In
                     </button>
                 </p>
             </form>

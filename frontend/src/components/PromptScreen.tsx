@@ -93,8 +93,8 @@ export default function PromptScreen() {
 
                 <div className='mt-8'>
                     <div
-                        className='relative mx-auto max-w-full'
-                        style={{ height: 137, width: 800 }}
+                        className='relative mx-auto max-w-full h-48 md:h-32 '
+                        style={{ width: 800 }}
                     >
                         {isFirstTimeLoggedIn && user?.id && (
                             <>
@@ -142,10 +142,10 @@ export default function PromptScreen() {
                         )}
 
                         <div
-                            className=' relative z-20 h-full w-full rounded-[28px] bg-[#1D2125] dark:bg-[#1D2125] transition duration-200 dark:border-zinc-800'
+                            className=' relative z-20 h-full w-full  rounded-[28px] bg-[#1D2125] dark:bg-[#1D2125] transition duration-200 dark:border-zinc-800 '
                             style={{ opacity: 1 }}
                         >
-                            <div className='h-full w-full'>
+                            <div className='h-full w-full '>
                                 <form className='overflow-hidden pb-12.5'>
                                     <div className='pt-5'>
                                         <div className='relative'>
@@ -192,13 +192,13 @@ export default function PromptScreen() {
                                                     )
                                                 }
                                                 value={promptText}
-                                                className='px-5 py-5 -mt-5 block outline-none resize-none w-full bg-transparent text-base text-white h-16.5'
+                                                className='px-5 py-5 -mt-5 block outline-none resize-none w-full bg-transparent  text-base text-white h-16.5 '
                                                 style={{ height: 64 }}
                                             />
                                         </div>
                                     </div>
 
-                                    <div className='flex items-center justify-between flex-col gap-y-2 sm:flex-row absolute bottom-3 left-3 right-3 h-20.5 sm:h-10'>
+                                    <div className='flex items-center justify-between flex-col gap-y-2 sm:flex-row absolute bottom-3 left-3 right-3 h-20.5 sm:h-10 '>
                                         <div className='flex w-full gap-2'>
                                             <div>
                                                 <div className='relative'>

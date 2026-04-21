@@ -9,6 +9,7 @@ import { useToggleStore } from "@/store/profile.store";
 import MusicLogo from "./molecules/MusicGptLogo";
 import { GradientAvatar } from "./molecules/ProfileIcon";
 import { div } from "framer-motion/client";
+import AuthScreen from "./Auth/AuthScreen";
 
 const Header = () => {
     const { user, isAuthenticating } = useAuthStore((state) => state);
@@ -67,15 +68,12 @@ const Header = () => {
             </div>
             <AnimatedModal
                 isOpen={isSignUpOpen}
-                className='max-w-lg'
+                className='max-w-md'
                 blurEffect='16px'
                 onClose={() => setSignUpOpen(false)}
                 showCloseButton={false}
             >
-                <LoginForm
-                    onClose={() => setSignUpOpen(false)}
-                    onSwitch={() => console.log("on Switch")}
-                />
+                <AuthScreen onClose={() => setSignUpOpen(false)} />
             </AnimatedModal>
 
             {user && (
